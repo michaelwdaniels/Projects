@@ -1,0 +1,12 @@
+﻿Analysis Type:,PANTHER Overrepresentation Test (Released 20171205),,,,,,
+Annotation Version and Release Date:,PANTHER version 13.1 Released 2018-02-03,,,,,,
+Analyzed List:,upload_1 (Saccharomyces cerevisiae),,,,,,
+Reference List:,Saccharomyces cerevisiae (all genes in database),,,,,,
+Test Type:,FISHER,,,,,,
+PANTHER Pathways,Saccharomyces cerevisiae - REFLIST (6722),upload_1 (348),upload_1 (expected),upload_1 (over/under),upload_1 (fold Enrichment),upload_1 (raw P-value),upload_1 (FDR)
+DNA replication (P00017),20,13,1.04,+,12.56,1.87E-09,1.40E-07
+General transcription regulation (P00023),25,13,1.29,+,10.04,1.41E-08,7.05E-07
+Transcription regulation by bZIP transcription factor (P00055),31,16,1.6,+,9.97,3.14E-10,4.71E-08
+Wnt signaling pathway (P00057),39,12,2.02,+,5.94,4.66E-06,1.40E-04
+Ubiquitin proteasome pathway (P00060),41,11,2.12,+,5.18,3.43E-05,8.58E-04
+Unclassified (UNCLASSIFIED),6121,284,316.89,-,0.9,8.65E-08,3.24E-06

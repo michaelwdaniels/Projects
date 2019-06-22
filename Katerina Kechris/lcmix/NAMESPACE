@@ -1,0 +1,13 @@
+exportPattern("^[^\\.]")
+
+import(R.methodsS3)
+
+S3method(bic,               mixmod)
+S3method(logLik,            mixmod)
+S3method(qfun,              mixmod)
+S3method(qval,              mixmod)
+S3method(print,             mixmod)
+S3method(print,             mdmixmod)
+S3method(plot,              multiroc)
+S3method(simulateFromFit,   mixmod)
+S3method(simulateFromFit,   mdmixmod)

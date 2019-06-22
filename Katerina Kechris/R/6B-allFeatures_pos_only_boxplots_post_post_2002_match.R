@@ -1,0 +1,100 @@
+load("saved_images/6B_boxplots_match")
+# ---------------------------------------------------------------------------- #
+# Script 2B
+# Author: Rani Powers
+#
+# Uses all features from only positive training
+# examples to classify positive and negative test examples
+# ---------------------------------------------------------------------------- #
+
+cat('SCRIPT 6B: Train + only (varying n - post 2002), test +/- genes post 2002, all features\n')
+
+# Get constants and helper functions
+source('R/includes.R')
+source('R/analysis_helpers.R')
+
+# Load preproc - preprocessed data from Script 0
+load('data/Rdata/cerevisiae_preprocessed.RData')
+
+# Format feature.table, date.table, and labels for divideYeastData()
+feature.table = as.data.frame(preproc$features)
+row.names(feature.table) = preproc$ensembl
+
+date.table = as.data.frame(preproc$sgd288)[,c(3,8)]
+date.table = date.table[order(date.table$year, decreasing = F),]
+date.table = date.table[!duplicated(date.table$ensembl),]
+row.names(date.table) = date.table$ensembl
+
+labels = as.numeric(preproc$essential)
+
+
+
+# ------------------------ DIVIDE DATA INTO TRAIN/TEST ----------------------- #
+# --------------------------- GET LCMIX PREDICTIONS -------------------------- #
+
+# Train on positive genes only, test on pos and matched neg genes to training size
+
+n1 <- 25  # Number of iterations
+
+AUC <- matrix(0,ncol=n1,nrow=20)
+rownames(AUC) <- c("S700","S600","S500","S400","S300","S200","S100","S50","S25","S10",
+                   "U700","U600","U500","U400","U300","U200","U100","U50","U25","U10")
+constant=769
+for(j in 1:n1){
+  seed1 <- 1000 + j
+  cat(paste0('Iteration ',j,' of ',n1,'\n'))
+  all.preds = list()
+  all.labels = list()
+  
+  for (train.size in c(700,600,500,400,300,200,100,50,25,10)){
+    cat('Modeling with training size =', train.size, '\n')
+    divided.data = divideYeastData(feature.table, date.table, labels,
+                                   train.class = 'positive',
+                                   num.train.examples = train.size, seed = seed1, constant = constant, negatives = 'match')
+    if(product(apply(divided.data$train[,1:7],2,sum))==0){
+      seed1 <- 100*train.size*j
+      divided.data = divideYeastData(feature.table, date.table, labels,
+                                     train.class = 'positive',
+                                     num.train.examples = train.size, seed = seed1, constant = constant, negatives = 'match')
+      
+    } 
+    is.train = divided.data$is.train
+    lcmix.preds = getLCMIXmodels(feature.table, is.train, labels[!is.train])$preds
+    all.preds$new = lcmix.preds$semisup
+    names(all.preds)[length(all.preds)] = paste0('Semisupervised (train n = ', 
+                                                 train.size, ')')
+    all.preds$new = lcmix.preds$unsup
+    names(all.preds)[length(all.preds)] = paste0('Unsupervised (train n = ', 
+                                                 train.size, ')')
+    all.labels$new = labels[!divided.data$is.train]
+    names(all.labels)[length(all.labels)] = paste0('Semisupervised (train n = ', 
+                                                   train.size, ')')
+    all.labels$new = labels[!divided.data$is.train]
+    names(all.labels)[length(all.labels)] = paste0('Unsupervised (train n = ', 
+                                                   train.size, ')')
+  }
+  mroc = multiroc(all.preds, all.labels)
+  n <- c(seq(1,19,2),seq(2,20,2))
+  for(i in 1:length(n)){
+    AUC[i,j] <- mroc[[n[i]]]$auc
+  }
+}
+
+
+AUC1 <- as.vector(t(AUC))
+n <- rep(rep(c(700,600,500,400,300,200,100,50,25,10),each=n1),2)
+n <- factor(n)
+method <- c(rep('semi',(length(AUC[,1])/2)*n1),
+            rep('unsup',(length(AUC[,1])/2)*n1))
+
+tog <- data.frame(AUC=AUC1,n=n,method=method)
+
+png('results/plots/6B-ROC_allFeatures_pos_only_boxplots_post_post_2002_match.png',
+    height = 8, width = 8, res = 300, units = 'in')
+boxplot(tog$AUC~tog$method*tog$n,at=c(1,2,4,5,7,8,10,11,13,14,16,17,19,20,22,23,25,26,28,29),col=c('aquamarine','pink'),xlab='Training Set = n', ylab='AUC',xaxt="n",
+        main='Semi-supervised vs Unsupervised (All Features)\nAUC for various n with 25 iterations\nTrain: pre & post/positive only - Test: pre & post/positive & match negatives',ylim=c(0.5,0.8))
+axis(side=1,at=seq(1.5,29.5,3),labels=c(10,25,50,100,200,300,400,500,600,700))
+legend("topleft",c("semi-supervised","unsupervised"),col=c('aquamarine','pink'),pch=15)
+dev.off()
+
+save.image("saved_images/6B_boxplots_match")

@@ -1,0 +1,1180 @@
+---
+title: "Report for CTLA-4 Biomarker in Melanoma Subjects"
+author: "Michael Daniels"
+date: "November 5, 2018"
+output: html_document
+---
+
+This analysis evaluates the imputation of missing data in two explanatory variables, Breslow Depth (continuous) and Ulceration (dichotomous) with a continuous response variable (CTLA-4 expression in blood as a biomarker) and where AJCC stage is the primary explantory variable of concern. Survival analysis will be performed with the imputed datasets.
+
+### _Outline_
+
+#### I. Distribution of Variables
+
+> A. Table 1 - Summary statistics of demographc variables (age, sex, CTLA-4 expression levels) stratified by Australians with melanoma, healthy control Australians, and Americans with melanoma. 
+
+> B. Table 2 - Summary statistics of all variables (including auxillary used for imputation) for Australia and USA stratified by missingness.
+
+> C. Table 3 - Summary statistics of all variables (including auxillary used for imputation) for Australia and USA stratified by missingness.
+
++ 1. Table 3a - Summary statistics of all variables (including auxillary used for imputation) for Australia and USA stratified by Breslow depth missingness.
+
++ 2. Table 3b - Summary statistics of all variables (including auxillary used for imputation) for Australia and USA stratified by Ulceration missingness.
+
+> D. Figure 1 - Density plot showing that CTLA-4 expression differs by country
+
+#### II. Aim 1: Does CTLA-4 level in blood differ between healthy controls and melanoma patients?
+
+Healthy controls have significantly higher CTLA-4 expression levels by 0.43 (95% CI 0.19-0.68, p=5.70e-04) than melanoma patients when controlling for age and sex.
+
+#### III. Aim 2: Is Stage associated with CTLA-4?
+
+Analysis will be performed separartely for AUS and USA and for stage as a continuous and factor variable. 
+
+For every increase in stage level in Australian melanoma patients, CTLA-4 decreases by 0.20 with a 95% CI of (0.07,0.34) and p=0.003 when adjusting for age, sex, time to blood draw, breslow depth, ulceration and site. (Results from imputing with auxiliary variables above a 0.05 correlation with the covariates with missing data)
+
+For every increase in stage level in US melanoma patients, CTLA-4 decreases by 0.17 with a 95% CI of (0.02,0.31) and p=0.030 when adjusting for age, sex, time to blood draw, breslow depth, ulceration, and site. (Results from imputing with auxiliary variables above a 0.05 correlation with the covariates with missing data)
+
+> A. Contrast missingness across variables of interest
+
+There is also a strong tendency for breslow depth and ulceration to not be reported for stages 3 and 4 and for patients with an unknown primary. 
+
+> B. Regression of missing indicator ~ Stage
+
+Missingness in Breslow and Ulceration is associated with level of stage.
+We will assume missing mechanism is MAR and impute missing values.
+
+> C. Explore and remove unnecessary correlated auxiliary variables (not shown due to brevity)
+
+> D. MAR Assumption
+
+There are two main argument against MCAR and MNAR as the missing mechanism. First, the distribution of CTLA-4 for those with missing values for Breslow depth and Ulceration don't overlap with the distributions of the observed values as seen in the margin plots in the Daignostics section. Also, there is also a strong tendency for breslow depth and ulceration to not be reported for stages 3 and 4 and for patients with an unknown primary. The dependency among other observed variables implies a possible MAR assumption. MCAR should have equal probability of being missing and MNAR shouldn't depend on any observed values. The second argument against MCAR and MNAR is the plausibility of the imputed values assumming MAR and the convergence of the mean imputed values as shown in the Diagnostic section. An additional test was performed to evaluate the sensitivity analysis under an MNAR assumption. The influence of increasing/decreasing Breslow imputed values for AUS and USA minimally decreased/increased the point estimate for stage for both AUS and USA. Since the influence under these scenarios is small, then the analysis is said to be robust against the investigated violations of the MAR mechanism.
+
+In order to test out the robustness of assumming an MAR missing mechanism, we will perform a sensitivity analysis. We will run different imputation techniques (MICE and KNN) and with various sets of auxiliary variables with which to perform the imputation. Our primary focus starts with multiple imputations with chained equations using the _mice_ package. Auxillary variables with correlations above 0.05 and 0.20 to each incomplete variable will be used to impute missing values. The default method of imputation for Breslow depth and ulceration is predictive mean and logistic regression matching, respectively. Alternative methods robustly estimated the stage coefficient similarly. The results from the _mice_ analysis were compared to an alternative imputation technique, k-nearest neighbors. Our final mice estimate were compared to the alternative imputation technique and the imputed values were evaluated for plausibilty.
+
+We will impute the missing values separately for Australia and USA melanoma patients creating five datasets. The datasets are analyzed separately and beta coefficents and standard errors will be averaged across the analyzed sets to reduce bias. All the default methods for continous and binary auxillary variables were used in the imputation of the two main incomplete variables, Breslow depth and Ulceration.
+
+
+> E. Imputation
+
+Our primary focus starts with multiple imputations by chained equations using the _mice_ package. There is empirical evidence that the variables, Breslow depth and Ulceration, are dependent upon other covariates such as stage which supports using a fully conditional specification with chained equations over simple imputation techniques such as mean or median. Auxiliary variables with correlations above 0.05 and 0.20 for each incomplete variable were used to impute missing values. The default method of imputation for Breslow depth and ulceration was predictive mean and logistic regression matching, respectively. The results from the _mice_ analysis was compared to an alternative imputation technique, k-nearest neighbors (KNN), and robustly estimated the stage coefficient similarly. Our final estimate was similar to the KNN imputed point estimate for stage. Diagnostics of the imputed values seemed plausible and provided more evidenve for a MAR mechanism. Imputation of a standard controlling covariate will increase our effective sample size in the final analysis. 
+
+We imputed the missing values separately for Australia and USA melanoma patients creating five complete datasets for each. The datasets were analyzed separately and beta coefficents and standard errors will be averaged across the analyzed sets to reduce bias by accounting for the added variance of imputation. All the default methods for continous and binary auxillary variables were used in the imputation of the two main incomplete variables, Breslow depth and Ulceration.
+
+> F. Model Fit
+
+For correlation cutoffs of 0.05 and 0.20, different sets of corellated auxillary variables above the threshold were used to impute the missing values in Breslow and Ulceration. Model comparison was performed within each of the two cutoffs with baseline covariates (age, sex, time to blood draw, breslow depth, ulceration, and site) plus the two sets of correlated auxiliary variables. Auxiliary variables correlated to stage were removed to prevent mediation of the association between stage and CTLA-4. Models between the two correlation cutoffs were determined by two factors - pooled R-squared and lambda (proportion of explained variance within each covariate for the imputed missing values). Higher R-square and a more even distribution of the variance in the missingness across the covariates were considered the best model. The correlation cutoff at 0.05 was the best fit for both AUS and USA using the baseline covariates of stage, sex, age, breslow depth, ulceration, time to blood draw, and site of the primary melanoma.
+
+> G. Diagnostics
+
++ 1. Evaluate imputations over iterations
+
+We look for consistency and plausibilty here.
+
++ 2. Evaluate convergence of Ulceration and Breslow mean imputed values
+  
+Convergence didn't improve with more iterations. Therefore, we reported the initial iterative setting of 5.
+
+#### Table 4 Compare Multiple Imputation by Chained Equations to K-Nearest Neighbor
+
++ Sensitivity analysis revealed that two different methods (MICE and KNN) and two different set of auxiliary variables to impute Breslow depth and Ulceration had very similar point estimates for stage with a range of -0.18 to -0.20 for AUS and -0.14 to -0.17 for USA. When stage is dichotomized (3&4 vs 0-2), AUS beta estimates for stage using MICE and KNN are -0.47 and -0.45, respectively, and USA beta estimates for stage using mice and KNN are both -0.14. Tertiary grouping (3&4 vs 1%2 vs 0) deciphered -0.33 and -0.22 (1&2 vs 0) for both MICE and KNN in AUS and USA, respectively. When comparing stages 3&4 to 0 in the tertiary grouping, AUS had -0.57 and -0.56 and USA had -0.99 and -1.00 for MICE and KNN, respectively..
+
+> H. Testing Influence under a MNAR Assumption
+
++ The influence of increasing/decreasing Breslow imputed values for AUS and USA minimally decreased/increased the point estimate for stage for both AUS and USA. Since the influence under these scenarios is small, then the analysis is said to be robust against the investigated violations of the MAR mechanism.
+
+#### IV. Survival Analysis
+
+Only the mortality outcome in Australia had a significant CTLA-4 hazard ratio (HR = 0.74, 95% CI = (0.54,1.00), p = 0.048).
+
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+
+rm(list=ls())
+par(mfrow=c(1,1),mar=c(2,2,1,1), oma=c(1,1,0,0))
+options(width=200)
+
+library(readr)
+library(mice)
+library(dplyr)
+library(VIM)
+library(survival)
+library(tableone)
+library(xtable)
+library(kableExtra)
+library(ggplot2)
+library(Hmisc)
+library(polycor)
+
+# Set working directory and read in data
+melanoma <- read.csv("Z:/projects/fujitaMayumi/melenoma project/combined full data MASTER WITH CONTROLS.csv")
+
+# Variables Site and Stage should be a factor variable
+melanoma$Site <- ifelse(melanoma$Scalp.Neck==1,1,ifelse(melanoma$Face==1,2,ifelse(melanoma$`Torso.Groin.Buttocks`==1,3,ifelse(melanoma$Extremities==1,4,ifelse(melanoma$Unknown.Primary==1,5,6)))))
+melanoma$Site <- factor(melanoma$Site)
+levels(melanoma$Site) <- c("Scalp/Neck","Face","Torso/Groin/Buttocks","Extremities","Unknown Primary","Not Specified") 
+melanoma$Death.Melanoma.Related <- ifelse(melanoma$Death.Melanoma.Related=="Y",1,ifelse(melanoma$Death.Melanoma.Related=="N",0,NA))
+
+# Select variables of interest with labels and create three subsets for HC AUS, MM AUS, and MM USA
+df <- melanoma %>% select(c(2:5,10,13:17,26,27,28,31,43,46,49,52,54:57,59:68,72,77,78,82,86,87))
+
+MM <- df %>% filter(Control==0)
+MM.AUS.0 <- MM %>% filter(USA==0)
+MM.USA.0 <- MM %>% filter(USA==1)
+HC <- df %>% filter(Control==1)
+AUS <- df %>% filter(USA==0)
+
+# add stratum structure to dataset for CreateTableOne functions
+df$stratum <- ifelse(df$Control==0&df$USA==0,2,ifelse(df$Control==1,1,3))
+df$stratum <- factor(df$stratum,levels = 1:3,labels = c('AUS Healthy','AUS Melanoma','USA Melanoma'))
+df$stratum2 <- ifelse(df$Control==0&df$USA==0,1,ifelse(df$Control==0&df$USA==1,2,3))
+df$stratum2 <- factor(df$stratum2,levels = 1:2,labels = c('AUS Melanoma','USA Melanoma'))
+MM$missing <- ifelse(is.na(MM$Breslow)|is.na(MM$Ulceration),1,0)
+MM$stratum3 <- ifelse(MM$USA==0&MM$missing==0,1,ifelse(MM$USA==0&MM$missing==1,2,ifelse(MM$USA==1&MM$missing==0,3,4)))
+MM$stratum3 <- factor(MM$stratum3,levels = 1:4,labels = c('AUS observed','AUS missing','USA observed','USA missing'))
+MM$missing.ulc <- factor(ifelse(is.na(MM$Ulceration),1,0))
+MM$missing.breslow <- factor(ifelse(is.na(MM$Breslow),1,0))
+MM$stratum4Bres <- ifelse(MM$USA==0&MM$missing.breslow==0,1,ifelse(MM$USA==0&MM$missing.breslow==1,2,ifelse(MM$USA==1&MM$missing.breslow==0,3,4)))
+MM$stratum4Bres <- factor(MM$stratum4Bres,levels = 1:4,labels = c('AUS observed','AUS missing','USA observed','USA missing'))
+MM$stratum4Ulc <- ifelse(MM$USA==0&MM$missing.ulc==0,1,ifelse(MM$USA==0&MM$missing.ulc==1,2,ifelse(MM$USA==1&MM$missing.ulc==0,3,4)))
+MM$stratum4Ulc <- factor(MM$stratum4Ulc,levels = 1:4,labels = c('AUS observed','AUS missing','USA observed','USA missing'))
+vars.names <- names(df)
+vars.names.MM <- names(MM)
+
+```
+
+### __Table 1__
+### Summary statistics of demographc variables stratified by healthy control Australians, and Australians and Americans with melanoma. 
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+Table1 <- CreateTableOne(vars = vars.names[c(9,10,4)], data = df, strata = 'stratum', factorVars = vars.names[c(10)],includeNA = T,test=F)
+Table1
+```
+
+### __Table 2__
+### Summary statistics of all variables (including auxillary used for imputation) stratified by Region.
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+Table2 <- CreateTableOne(vars = vars.names[c(5,7,11,13,14,15,16,18,22,24,27,28,34,36)], data = df, strata = 'stratum2', factorVars = vars.names[c(5,7,13,14,15,16,22,27,28,36)],includeNA = T,test=F)
+Table2
+```
+
+### __Table 3__
+### Summary statistics of all variables for Australia and USA stratified by missingness.
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+Table3 <- CreateTableOne(vars = vars.names.MM[c(5,7,11,13,14,15,16,18,22,24,27,28,34,36)], data = MM, strata = 'stratum3', factorVars = vars.names.MM[c(5,7,13,14,15,16,22,27,28,36)],includeNA = T,test=F)
+Table3
+```
+
+### __Table 3a__
+### Summary statistics of all variables for Australia and USA stratified by Breslow missingness.
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+Table3a <- CreateTableOne(vars = vars.names.MM[c(5,7,11,13,14,15,16,18,22,24,27,28,34,36)], data = MM, strata = 'stratum4Bres', factorVars = vars.names.MM[c(5,7,13,14,15,16,22,27,28,36)],includeNA = T,test=F)
+Table3a
+```
+
+### __Table 3b__
+### Summary statistics of all variables for Australia and USA stratified by Ulceration missingness.
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+Table3b <- CreateTableOne(vars = vars.names.MM[c(5,7,11,13,14,15,16,18,22,24,27,28,34,36)], data = MM, strata = 'stratum4Ulc', factorVars = vars.names.MM[c(5,7,13,14,15,16,22,27,28,36)],includeNA = T,test=F)
+Table3b
+```
+
+There are 48 and 157 missing values for Breslow Depth and Ulceration, respectively.
+
+### __Figure 1__
+
+### CTLA-4 expression differs by country
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+CTLA <- c(df$log2CTLA4GAPDH[df$USA==0&df$Control==1],df$log2CTLA4GAPDH[which(df$Control==0&df$USA==0)],df$log2CTLA4GAPDH[df$USA==1])
+Group <- c(rep(1,length(df$log2CTLA4GAPDH[df$USA==0&df$Control==1])),rep(2,length(df$log2CTLA4GAPDH[which(df$Control==0&df$USA==0)])),rep(3,length(df$log2CTLA4GAPDH[df$USA==1])))
+CTLA.density <- as.data.frame(cbind(CTLA,Group))
+CTLA.density$Group <- factor(CTLA.density$Group,labels=c("HC","AUS MM","USA MM"))
+
+plot1 <- ggplot(CTLA.density,aes(x=CTLA)) + geom_density(aes(group=Group,colour=Group,fill=Group),alpha=0.3) + scale_fill_brewer(palette="Blues")
+plot1
+
+kable(CTLA.density %>% group_by(Group) %>% summarise(n=n(),'CTLA (mean)'=round(mean(CTLA),1),'CTLA (sd)'=round(sd(CTLA),2))) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),position = "c",full_width = FALSE) %>%
+  column_spec(1:4,width="5em") %>%
+  footnote("Mean and standard deviation of Australian healthy controls, Australian melanoma, and USA melanoma groups. The CTLA-4 distribution of the healthy controls lies between the two melanoma groups. All three groups are highly significantly different from each other. This implies that the melanoma groups are from different populations and should be analyzed seperately.")
+```
+
+### __Comparing CTLA, age, gender, time to blood draw, breslow depth and ulceration between Australian and US melanoma patients.__
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+kable(MM %>% group_by(USA) %>% summarise(n=length(log2CTLA4GAPDH),'CTLA (mean)'=round(mean(log2CTLA4GAPDH),2),'Male (%)'=round(sum(Sex)/n,2),'Age (mean)'=round(mean(Age),2),'Ulceration (%)'=round(sum(Ulceration,na.rm = T)/n,2),'Missing Ulc (%)'=round(sum(is.na(Ulceration))/n,2),'Breslow Depth (mean)'=round(mean(Breslow,na.rm=T),2),'Missing Bres (%)'=round(sum(is.na(Breslow))/n,2),'Time to Draw (mean)'=round(mean(Time2Draw,na.rm = T),2))) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),position = "c",full_width = FALSE) %>%
+  footnote("US and Australia melanoma patients have significantly different CTLA-4 values and average ages. Ulceration is missing for 14% and 47% of Australian and US melanoma patients, respectively. Breslow depth is missing for 9% and 11% of Australian and US melanoma patients, respectively.")
+
+```
+
+### __Comparing CTLA, age, gender, time to blood draw, breslow depth and ulceration between Australian and US melanoma patients within site on body of cancer.__
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+kable(MM %>% group_by(USA,Site) %>% summarise(n=length(log2CTLA4GAPDH),'CTLA (mean)'=round(mean(log2CTLA4GAPDH),2),'Male (%)'=round(sum(Sex)/n,2),'Age (mean)'=round(mean(Age),2),'Ulceration (%)'=round(sum(Ulceration,na.rm = T)/n,2),'Missing Ulc (%)'=round(sum(is.na(Ulceration))/n,2),'Breslow Depth (mean)'=round(mean(Breslow,na.rm=T),2),'Missing Bres (%)'=round(sum(is.na(Breslow))/n,2),'Time to Draw (mean)'=round(mean(Time2Draw,na.rm = T),2))) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),position = "c",full_width = FALSE) %>%
+  footnote("Australia and US had 8 and 16 subjects with an unknown primary, respectvely. All of these subjects had missing data for ulceration and breslow depth.")
+```
+
+### __Comparing CTLA, age, gender, time to blood draw, breslow depth and ulceration between Australian and US melanoma patients within country and stage.__
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+kable(MM %>% group_by(USA,Stage) %>% summarise(n=length(log2CTLA4GAPDH),'CTLA (mean)'=round(mean(log2CTLA4GAPDH),2),'Male (%)'=round(sum(Sex)/n,2),'Age (mean)'=round(mean(Age),2),'Ulceration (%)'=round(sum(Ulceration,na.rm = T)/n,2),'Missing Ulc (%)'=round(sum(is.na(Ulceration))/n,2),'Breslow Depth (mean)'=round(mean(Breslow,na.rm=T),2),'Missing Bres (%)'=round(sum(is.na(Breslow))/n,2),'Time to Draw (mean)'=round(mean(Time2Draw,na.rm = T),2))) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),position = "c",full_width = FALSE) %>% footnote("Note the pattern in average age across stage comparing Australia and US.")
+```
+
+### __Comparing CTLA, age, gender, time to blood draw, breslow depth and ulceration between Australian and US melanoma patients within country and Breslow missingness.__
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+MM$missing.breslow <- factor(ifelse(is.na(MM$Breslow),1,0))
+kable(MM %>% group_by(USA,missing.breslow) %>% summarise(n=length(log2CTLA4GAPDH),'CTLA (mean)'=round(mean(log2CTLA4GAPDH),2),'Male (%)'=round(sum(Sex)/n,2),'Age (mean)'=round(mean(Age),2),'Ulceration (%)'=round(sum(Ulceration,na.rm = T)/n,2),'Missing Ulc (%)'=round(sum(is.na(Ulceration))/n,2),'Breslow Depth (mean)'=round(mean(Breslow,na.rm=T),2),'Time to Draw (mean)'=round(mean(Time2Draw,na.rm = T),2))) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),position = "c",full_width = FALSE) %>% footnote("AUS is coded as USA=0, missing.breslow is coded as missing value = 1.")
+```
+
+
+### __Comparing CTLA, age, gender, time to blood draw, breslow depth and ulceration between Australian and US melanoma patients within country and Ulceration missingness.__
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+MM$missing.ulc <- factor(ifelse(is.na(MM$Ulceration),1,0))
+kable(MM %>% group_by(USA,missing.ulc) %>% summarise(n=length(log2CTLA4GAPDH),'CTLA (mean)'=round(mean(log2CTLA4GAPDH),2),'Male (%)'=round(sum(Sex)/n,2),'Age (mean)'=round(mean(Age),2),'Ulceration (%)'=round(sum(Ulceration,na.rm = T)/n,2),'Breslow Depth (mean)'=round(mean(Breslow,na.rm=T),2),'Missing Bres (%)'=round(sum(is.na(Breslow))/n,2),'Time to Draw (mean)'=round(mean(Time2Draw,na.rm = T),2))) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),position = "c",full_width = FALSE) %>% footnote("AUS is coded as USA=0, missing.breslow is coded as missing value = 1.")
+```
+
+The difference in CTLA-4 expression level between the USA and Australia is significantly different. Excluding the higher CTLA-4 expression level from HC in the Australia population still results in a significant difference between the USA and Australia melanoma patients. Stratification by country isnt possible due to lack of American controls. Since there are no healthy controls from USA and USA CTLA-4 values are significantly higher, we should report the t-test between melanoma and HC in Australia and exclude the American melanoma patients. Performing a t-test on CTLA-4 expression level between healthy controls and melanoma patients is nonsensical due to the expression difference between countries.
+
+### __CTLA-4 ~ Control + Age + Sex__
+
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+mod.AUS <- lm(log2CTLA4GAPDH ~ Control + Age + Sex, data=AUS)
+beta=round(summary(mod.AUS)$coef[2,1],2)
+CI=paste('(',round(coef(summary(mod.AUS))[2,1]-coef(summary(mod.AUS))[2,2]*1.96,2),',',round(coef(summary(mod.AUS))[2,1]+coef(summary(mod.AUS))[2,2]*1.96,2),')')
+p=round(summary(mod.AUS)$coef[2,4],4)
+mod.1 <- data.frame(beta,CI,p)
+colnames(mod.1) <- c("Beta","95% CI","p-value")
+rownames(mod.1) <- c("Control = 1")
+kable(mod.1) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),position = "c",full_width = FALSE) %>% column_spec(1:4,width="8em")
+```
+
+### _Aim 1: Does CTLA-4 level in blood differ between healthy controls and melanoma patients?_
+
+Healthy controls have significantly higher CTLA-4 expression levels by 0.43 (95% CI 0.19-0.68, p=5.70e-04) than melanoma patients when controlling for age and sex.
+
+Next, we will explore how the missingness relates to the other variables of concern. 
+
+### Contrast missingness Ulceration (Australia)
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+Ulc.nonmissing.summary <- MM.AUS.0 %>% filter(!is.na(Ulceration)) %>% summarise(n=length(log2CTLA4GAPDH),'CTLA (mean)'=round(mean(log2CTLA4GAPDH),2),'Male (%)'=round(sum(Sex)/n,2),'Age (mean)'=round(mean(Age),2),'Breslow Depth (mean)'=round(mean(Breslow,na.rm=T),2),'Missing Bres (%)'=round(sum(is.na(Breslow))/n,2),'Time to Draw (mean)'=round(mean(Time2Draw,na.rm = T),2))
+
+Ulc.missing.summary <- MM.AUS.0 %>% filter(is.na(Ulceration)) %>% summarise(n=length(log2CTLA4GAPDH),'CTLA (mean)'=round(mean(log2CTLA4GAPDH),2),'Male (%)'=round(sum(Sex)/n,2),'Age (mean)'=round(mean(Age),2),'Breslow Depth (mean)'=round(mean(Breslow,na.rm=T),2),'Missing Bres (%)'=round(sum(is.na(Breslow))/n,2),'Time to Draw (mean)'=round(mean(Time2Draw,na.rm = T),2))
+
+Ulceration.miss.compare <- as.data.frame(rbind(Ulc.nonmissing.summary, Ulc.missing.summary))
+rownames(Ulceration.miss.compare) <- c("Non-missing","Missing")
+Ulceration.miss.compare[,c(2:7)] <- round(Ulceration.miss.compare[,c(2:7)],2)
+kable(Ulceration.miss.compare) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),position = "c",full_width = FALSE)
+```
+
+### Contrast missingness Ulceration (USA)
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+Ulc.nonmissing.summary <- MM.USA.0 %>% filter(!is.na(Ulceration)) %>% summarise(n=length(log2CTLA4GAPDH),'CTLA (mean)'=round(mean(log2CTLA4GAPDH),2),'Male (%)'=round(sum(Sex)/n,2),'Age (mean)'=round(mean(Age),2),'Breslow Depth (mean)'=round(mean(Breslow,na.rm=T),2),'Missing Bres (%)'=round(sum(is.na(Breslow))/n,2),'Time to Draw (mean)'=round(mean(Time2Draw,na.rm = T),2))
+
+Ulc.missing.summary <- MM.USA.0 %>% filter(is.na(Ulceration)) %>% summarise(n=length(log2CTLA4GAPDH),'CTLA (mean)'=round(mean(log2CTLA4GAPDH),2),'Male (%)'=round(sum(Sex)/n,2),'Age (mean)'=round(mean(Age),2),'Breslow Depth (mean)'=round(mean(Breslow,na.rm=T),2),'Missing Bres (%)'=round(sum(is.na(Breslow))/n,2),'Time to Draw (mean)'=round(mean(Time2Draw,na.rm = T),2))
+
+Ulceration.miss.compare <- as.data.frame(rbind(Ulc.nonmissing.summary, Ulc.missing.summary))
+rownames(Ulceration.miss.compare) <- c("Non-missing","Missing")
+Ulceration.miss.compare[,c(2:7)] <- round(Ulceration.miss.compare[,c(2:7)],2)
+kable(Ulceration.miss.compare) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),position = "c",full_width = FALSE)
+```
+
+### Contrast missingness Breslow depth (Australia)
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+Bres.nonmissing.summary <- MM.AUS.0 %>% filter(!is.na(Breslow)) %>% summarise(n=length(log2CTLA4GAPDH),'CTLA (mean)'=round(mean(log2CTLA4GAPDH),2),'Male (%)'=round(sum(Sex)/n,2),'Age (mean)'=round(mean(Age),2),'Ulceration (%)'=round(sum(Ulceration,na.rm=T),2),'Missing Ulc (%)'=round(sum(is.na(Ulceration))/n,2),'Time to Draw (mean)'=round(mean(Time2Draw,na.rm = T),2))
+
+Bres.missing.summary <- MM.AUS.0 %>% filter(is.na(Breslow)) %>% summarise(n=length(log2CTLA4GAPDH),'CTLA (mean)'=round(mean(log2CTLA4GAPDH),2),'Male (%)'=round(sum(Sex)/n,2),'Age (mean)'=round(mean(Age),2),'Ulceration (%)'=round(sum(Ulceration,na.rm=T),2),'Missing Ulc (%)'=round(sum(is.na(Ulceration))/n,2),'Time to Draw (mean)'=round(mean(Time2Draw,na.rm = T),2))
+
+Bres.miss.compare <- as.data.frame(rbind(Bres.nonmissing.summary, Bres.missing.summary))
+rownames(Bres.miss.compare) <- c("Non-missing","Missing")
+Bres.miss.compare[,c(2:7)] <- round(Bres.miss.compare[,c(2:7)],2)
+kable(Bres.miss.compare) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),position = "c",full_width = FALSE)
+```
+
+### Contrast missingness Breslow depth (USA)
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+Bres.nonmissing.summary <- MM.USA.0 %>% filter(!is.na(Breslow)) %>% summarise(n=length(log2CTLA4GAPDH),'CTLA (mean)'=round(mean(log2CTLA4GAPDH),2),'Male (%)'=round(sum(Sex)/n,2),'Age (mean)'=round(mean(Age),2),'Ulceration (%)'=round(sum(Ulceration,na.rm=T),2),'Missing Ulc (%)'=round(sum(is.na(Ulceration))/n,2),'Time to Draw (mean)'=round(mean(Time2Draw,na.rm = T),2))
+
+Bres.missing.summary <- MM.USA.0 %>% filter(is.na(Breslow)) %>% summarise(n=length(log2CTLA4GAPDH),'CTLA (mean)'=round(mean(log2CTLA4GAPDH),2),'Male (%)'=round(sum(Sex)/n,2),'Age (mean)'=round(mean(Age),2),'Ulceration (%)'=round(sum(Ulceration,na.rm=T),2),'Missing Ulc (%)'=round(sum(is.na(Ulceration))/n,2),'Time to Draw (mean)'=round(mean(Time2Draw,na.rm = T),2))
+
+Bres.miss.compare <- as.data.frame(rbind(Bres.nonmissing.summary, Bres.missing.summary))
+rownames(Bres.miss.compare) <- c("Non-missing","Missing")
+Bres.miss.compare[,c(2:7)] <- round(Bres.miss.compare[,c(2:7)],2)
+kable(Bres.miss.compare) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),position = "c",full_width = FALSE)
+```
+
+### Is missingness associated with Stage?
+
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+MM.AUS.0$missing.ulc <- ifelse(is.na(MM.AUS.0$Ulceration),1,0)
+MM.AUS.0$missing.bres <- ifelse(is.na(MM.AUS.0$Breslow),1,0)
+
+miss.ulc.stage.AUS <- coef(summary(lm(missing.ulc ~ Stage, data=MM.AUS.0)))[2,c(1,2,4)]
+miss.bres.stage.AUS <- coef(summary(lm(missing.bres ~ Stage, data=MM.AUS.0)))[2,c(1,2,4)]
+
+MM.USA.0$missing.ulc <- ifelse(is.na(MM.USA.0$Ulceration),1,0)
+MM.USA.0$missing.bres <- ifelse(is.na(MM.USA.0$Breslow),1,0)
+
+miss.ulc.stage.USA <- coef(summary(lm(missing.ulc ~ Stage, data=MM.USA.0)))[2,c(1,2,4)]
+miss.bres.stage.USA <- coef(summary(lm(missing.bres ~ Stage, data=MM.USA.0)))[2,c(1,2,4)]
+
+miss.stage <- as.data.frame(rbind(miss.ulc.stage.AUS,miss.bres.stage.AUS,miss.ulc.stage.USA,miss.bres.stage.USA))
+rownames(miss.stage) <- c("Missing Ulceration ~ Stage (AUS)","Missing Breslow ~ Stage (AUS)","Missing Ulceration ~ Stage (USA)","Missing Breslow ~ Stage (USA)")
+colnames(miss.stage) <- c("Beta","SE","p-value")
+miss.stage[,3] <- "<0.001"
+miss.stage[,c(1,2)] <- round(miss.stage[,c(1,2)],2)
+kable(miss.stage) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),position = "c",full_width = FALSE)
+
+MM.AUS.0 <- MM.AUS.0[,-c(39,40)] # removed stratum variables (unnecesary)
+MM.USA.0 <- MM.USA.0[,-c(39,40)] # removed stratum variables (unnecesary)
+```
+
+### __Summary of ulceration and breslow contrasts__
+For Ulceration, the 157 missing values were compared to the 325 known observations. The missing data for Ulceration had higher average CTLA-4 expression (13.01) with a slightly lower standard deviation (1.18) contrasted with the observed average of 12.48 (sd=1.23). There were more males (70% vs. 54%), more Americans (81% vs. 45%), a longer average time to blood draw (3.58 yrs. vs. 2.30 yrs.), younger in average age (57.96 vs. 60.21), and a higher percentage of missing Breslow depth (28% vs. 1%) in the missing data when compared.
+
+For Breslow depth, the 48 missing values were compared to the 434 known observations. The missing data for Ulceration had similar CTLA-4 expression (12.69) with similar standard deviation (1.30) contrasted with the observed average of 12.64 (sd=1.30). There were more males (73% vs. 58%), more Americans (62% vs. 56%), a longer average time to blood draw (3.99 yrs. vs. 2.58 yrs.), similar in average age (58.92 vs. 59.54), and a higher percentage of missing ulceration (92% vs. 26%) in the missing data when compared. Because missingness in ulceration and Breslow depth is associated with the explanatory variable, Stage, there is strong empirical evidence against MCAR.  
+
+### __MAR Assumption__
+
+There is also a strong tendency for breslow depth and ulceration to not be reported for stages 3 and 4 and for patients with an unknown primary. According to AJCC staging, stages 3 and 4 classification are heavily determined by the detectable sizes of cancer cells at the sentinel node and the number of nodes affected. For ulceration and Breslow depth, the most probable reason for missingness of the $y_{unobserved}$ for ulcer status and skin depth of tumor is errors in reporting or data collections. Lack recording data properly doesn't seem to be inherently related to the ulcer status or tumor size which would rule. However, the distribution of the missingness is significantly higher in higher stages and in certain sites such as those with an unknown primary. The dependency among other observed values variables implies a possible MAR assumption. Therefore, imputation of a standard controlling covariate will increase our effective sample size in the final analysis.   
+
+In order to test out the robustness of assumming an MAR missing mechanism, we will perform a sensitivity analysis. We will run different imputation techniques (MICE and KNN) and with various sets of auxiliary variables with which to perform the imputation. Our primary focus starts with multiple imputations with chained equations using the _mice_ package. Auxillary variables with correlations above 0.05 and 0.20 to each incomplete variable will be used to impute missing values. The default method of imputation for Breslow depth and ulceration is predictive mean and logistic regression matching, respectively. Alternative methods robustly estimated the stage coefficient similarly. The results from the _mice_ analysis were compared to an alternative imputation technique, k-nearest neighbors. Our final mice estimate were compared to the alternative imputation technique and the imputed values were evaluated for plausibilty.
+
+We will impute the missing values separately for Australia and USA melanoma patients creating five datasets. The datasets are analyzed separately and beta coefficents and standard errors will be averaged across the analyzed sets to reduce bias. All the default methods for continous and binary auxillary variables were used in the imputation of the two main incomplete variables, Breslow depth and Ulceration.
+
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+### __Impute Ulceration and Breslow depth__
+
+var.numeric <- names(MM.AUS.0)[c(1:4,9,11,18,23,24,34)]
+var.factor <- names(MM.AUS.0)[-c(1:4,9,11,18,23,24,34)]
+
+MM.AUS.0[,c(var.factor)] <- lapply(MM.AUS.0[,c(var.factor)],factor)
+MM.USA.0[,c(var.factor)] <- lapply(MM.USA.0[,c(var.factor)],factor)
+MM.AUS <- MM.AUS.0[,-c(17,19,21,28,32,33)] # remove factor variables with ony 1 level
+MM.USA <- MM.USA.0[,-c(17,19,21,33)] # remove factor variables with only 1 level
+
+# Imputations performed on Ulceration and Breslow Depth for all stages of melanoma
+# First we will look at the correlated variables to ulceration and breslow depth and then reduce number of collinear variables but removing those that have the highest count of collinear variables
+
+# Input correlation cutoffs for auxiliary variable selection
+corrcutoff <- c(0.05,0.20)
+iterations <- 5
+vars.names.MM.AUS <- names(MM.AUS)
+vars.names.MM.USA <- names(MM.USA)
+```
+
+```{r comment=NA,echo=F,message=F,warning=FALSE}
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
+{
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  r <- abs(cor(x, y))
+  txt <- format(c(r, 0.123456789), digits = digits)[1]
+  txt <- paste0(prefix, txt)
+  if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+  text(0.5, 0.5, txt, cex = cex.cor * r)
+}
+
+panel.polyserial <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
+{
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  r <- abs(polyserial(x, y))
+  txt <- format(c(r, 0.123456789), digits = digits)[1]
+  txt <- paste0(prefix, txt)
+  if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+  text(0.5, 0.5, txt, cex = cex.cor * r)
+}
+
+panel.polychor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
+{
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  r <- abs(polychor(x, y))
+  txt <- format(c(r, 0.123456789), digits = digits)[1]
+  txt <- paste0(prefix, txt)
+  if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+  text(0.5, 0.5, txt, cex = cex.cor * r)
+}
+```
+
+
+```{r comment=NA,echo=T,message=F,warning=FALSE, include=F,eval=F}
+### __Examine auxiliary data correlation__
+pairs(MM.AUS[,1:4], lower.panel = panel.smooth, upper.panel = panel.cor,
+      gap=0, row1attop=FALSE)
+# include 1 and 4
+# look at 3 progression indicators
+cor(as.numeric(MM.AUS$Progression.anytime),as.numeric(MM.AUS$Progression.prior),use = 'pairwise.complete')
+cor(as.numeric(MM.AUS$Progression.anytime),as.numeric(MM.AUS$Progression.after),use = 'pairwise.complete')
+# include 8
+data.temp <- MM.AUS[,vars.names.MM.AUS[c(1,4,5,8,9,10,11,12,13)]]
+data.temp <- data.frame(lapply(data.temp,as.numeric))
+pairs(data.temp, lower.panel = panel.smooth, upper.panel = panel.cor,
+      gap=0, row1attop=FALSE)
+pairs(data.temp, lower.panel = panel.smooth, upper.panel = panel.polyserial,
+      gap=0, row1attop=FALSE)
+pairs(data.temp, lower.panel = panel.smooth, upper.panel = panel.polychor,
+      gap=0, row1attop=FALSE)
+# Progression anytime, Breslow, and Clark's level are correlated with Stage
+
+polychor(MM.AUS$Stage,MM.AUS$Site)
+polychor(MM.AUS$Stage,MM.AUS$Clarks.level) # 0.82
+polychor(MM.AUS$Stage,MM.AUS$Progression.anytime) # 0.89
+#polyserial(MM.AUS$Breslow,MM.AUS$Stage) # 0.81
+
+data.temp <- MM.AUS[,vars.names.MM.AUS[c(19:26)]]
+data.temp <- data.frame(lapply(data.temp,as.numeric))
+pairs(data.temp, lower.panel = panel.smooth, upper.panel = panel.polychor,
+      gap=0, row1attop=FALSE)
+```
+
+
+```{r comment=NA,echo=F,message=F,warning=FALSE, include=T,eval=F}
+### __Best Model Fit for Site__
+#Compare the AIC and BIC of various combinations of stage and found two different models for AUS and USA.
+
+# Find the best subset of stages univariately
+MM.AUS.test <- MM.AUS
+
+# 6 groups site simply as factor
+mod.AUS <- lm(log2CTLA4GAPDH ~ Site, data=MM.AUS.test)
+# AIC  541.8182
+2*extractAIC(mod.AUS)[1]-2*logLik(mod.AUS)[1]
+# BIC 563.0215
+log(nrow(MM.AUS.test))*extractAIC(mod.AUS)[1]-2*logLik(mod.AUS)[1]
+
+# 1-2 vs 3 vs 4 vs 5-6
+MM.AUS.test$Site12.3.4.56 <- factor(ifelse(as.numeric(MM.AUS.test$Site)<3,0,ifelse(as.numeric(MM.AUS.test$Site)==3,1,ifelse(as.numeric(MM.AUS.test$Site)==4,2,3))))
+mod.AUS.1 <- lm(log2CTLA4GAPDH ~ Site12.3.4.56, data=MM.AUS.test)
+# AIC 538.7051
+2*extractAIC(mod.AUS.1)[1]-2*logLik(mod.AUS.1)[1]
+# BIC 552.0745
+log(nrow(MM.AUS.test))*extractAIC(mod.AUS.1)[1]-2*logLik(mod.AUS.1)[1]
+
+# 1-4 vs 5-6
+MM.AUS.test$Site14.56 <- factor(ifelse(as.numeric(MM.AUS.test$Site)<5,0,1))
+mod.AUS.1 <- lm(log2CTLA4GAPDH ~ Site14.56, data=MM.AUS.test)
+# AIC 535.4978
+2*extractAIC(mod.AUS.1)[1]-2*logLik(mod.AUS.1)[1]
+# BIC 535.4978
+log(nrow(MM.AUS.test))*extractAIC(mod.AUS.1)[1]-2*logLik(mod.AUS.1)[1]
+
+# 1,2,4 vs 3 vs 5-6
+MM.AUS.test$Site124.3.56 <- factor(ifelse(as.numeric(MM.AUS.test$Site)==c(1,2,4),0,ifelse(as.numeric(MM.AUS.test$Site)==3,1,2)))
+mod.AUS.1 <- lm(log2CTLA4GAPDH ~ Site124.3.56, data=MM.AUS.test)
+# AIC 542.6076
+2*extractAIC(mod.AUS.1)[1]-2*logLik(mod.AUS.1)[1]
+# BIC 552.6346
+log(nrow(MM.AUS.test))*extractAIC(mod.AUS.1)[1]-2*logLik(mod.AUS.1)[1]
+
+
+# Find the best subset of stages univariately
+MM.USA.test <- MM.USA
+
+# 6 groups site simply as factor
+mod.USA <- lm(log2CTLA4GAPDH ~ Site, data=MM.USA.test)
+# AIC  788.5971
+2*extractAIC(mod.USA)[1]-2*logLik(mod.USA)[1]
+# BIC 810.2539
+log(nrow(MM.USA.test))*extractAIC(mod.USA)[1]-2*logLik(mod.USA)[1]
+
+# 1-2 vs 3 vs 4 vs 5-6
+MM.USA.test$Site12.3.4.56 <- factor(ifelse(as.numeric(MM.USA.test$Site)<3,0,ifelse(as.numeric(MM.USA.test$Site)==3,1,ifelse(as.numeric(MM.USA.test$Site)==4,2,3))))
+mod.USA.1 <- lm(log2CTLA4GAPDH ~ Site12.3.4.56, data=MM.USA.test)
+# AIC 784.6671
+2*extractAIC(mod.USA.1)[1]-2*logLik(mod.USA.1)[1]
+# BIC 799.105
+log(nrow(MM.USA.test))*extractAIC(mod.USA.1)[1]-2*logLik(mod.USA.1)[1]
+
+# 1-4 vs 5-6
+MM.USA.test$Site14.56 <- factor(ifelse(as.numeric(MM.USA.test$Site)<5,0,1))
+mod.USA.1 <- lm(log2CTLA4GAPDH ~ Site14.56, data=MM.USA.test)
+# AIC 780.8759
+2*extractAIC(mod.USA.1)[1]-2*logLik(mod.USA.1)[1]
+# BIC  788.0948
+log(nrow(MM.USA.test))*extractAIC(mod.USA.1)[1]-2*logLik(mod.USA.1)[1]
+
+# 1,2,4 vs 3 vs 5-6
+MM.USA.test$Site124.3.56 <- factor(ifelse(as.numeric(MM.USA.test$Site)==c(1,2,4),0,ifelse(as.numeric(MM.USA.test$Site)==3,1,2)))
+mod.USA.1 <- lm(log2CTLA4GAPDH ~ Site124.3.56, data=MM.USA.test)
+# AIC 781.9377
+2*extractAIC(mod.USA.1)[1]-2*logLik(mod.USA.1)[1]
+# BIC 792.7661
+log(nrow(MM.USA.test))*extractAIC(mod.USA.1)[1]-2*logLik(mod.USA.1)[1]
+
+# Recode optimized categorization of Site
+MM.AUS$Site <- factor(ifelse(as.numeric(MM.AUS$Site)<5,0,1))
+MM.USA$Site <- factor(ifelse(as.numeric(MM.USA$Site)<5,0,1))
+
+```
+Grouping Site into 2 levels (Unknown Primary & Unspecified vs rest) is optimal for both AUS and USA
+
+```{r chunk1, ref.label="Impute", comment=NA,echo=T,message=F,warning=FALSE, include=F,eval=T}
+```
+
+### __Evaluate Censorship in AUS__
+
+```{r comment=NA,echo=F,message=F,warning=FALSE, include=T,eval=T}
+plot(density(MM.comp.AUS.cor20.1[[1]]$Survival.after.blood.draw[MM.comp.AUS.cor20.1[[1]]$Other.Primary.AFTER==1]),col=1,ylim=c(0,0.5),main='Time to Event comparing Censorship',xlab='Time (years)')
+legend('topleft',c('New Primary=1','New Primary=0'),col = 1:2,lty = 1)
+lines(density(MM.comp.AUS.cor20.1[[1]]$Survival.after.blood.draw[MM.comp.AUS.cor20.1[[1]]$Other.Primary.AFTER==0]),col=2)
+
+cat(paste('Proportion of censored events = ', round(sum(as.numeric(MM.comp.AUS.cor20.1[[1]]$Other.Primary.AFTER)-1)/length(MM.comp.AUS.cor20.1[[1]]$Other.Primary.AFTER),2)*100,'%'))
+
+plot(density(MM.comp.AUS.cor20.1[[1]]$Survival.after.blood.draw[MM.comp.AUS.cor20.1[[1]]$Progression.AFTER==1]),col=1,ylim=c(0,0.4),main='Time to Event comparing Censorship',xlab='Time (years)')
+legend('topleft',c('Progression=1','Progression=0'),col = 1:2,lty = 1)
+lines(density(MM.comp.AUS.cor20.1[[1]]$Survival.after.blood.draw[MM.comp.AUS.cor20.1[[1]]$Progression.AFTER==0]),col=2)
+
+cat(paste('Proportion of censored events = ', round(sum(as.numeric(MM.comp.AUS.cor20.1[[1]]$Progression.AFTER)-1)/length(MM.comp.AUS.cor20.1[[1]]$Progression.AFTER),2)*100,'%'))
+
+plot(density(MM.comp.AUS.cor20.1[[1]]$Survival.after.blood.draw[MM.comp.AUS.cor20.1[[1]]$Died==1]),col=1,ylim=c(0,0.5),main='Time to Event comparing Censorship',xlab='Time (years)')
+legend('topleft',c('Died=1','Died=0'),col = 1:2,lty = 1)
+lines(density(MM.comp.AUS.cor20.1[[1]]$Survival.after.blood.draw[MM.comp.AUS.cor20.1[[1]]$Died==0]),col=2)
+
+cat(paste('Proportion of censored events = ', round(sum(as.numeric(MM.comp.AUS.cor20.1[[1]]$Died)-1)/length(MM.comp.AUS.cor20.1[[1]]$Died),2)*100,'%'))
+
+```
+
+### __Evaluate Censorship in USA__
+
+```{r comment=NA,echo=F,message=F,warning=FALSE, include=T,eval=T}
+plot(density(MM.comp.USA.cor20.1[[1]]$Survival.after.blood.draw[MM.comp.USA.cor20.1[[1]]$Other.Primary.AFTER==1]),col=1,ylim=c(0,0.5),main='Time to Event comparing Censorship',xlab='Time (years)')
+legend('topleft',c('New Primary=1','New Primary=0'),col = 1:2,lty = 1)
+lines(density(MM.comp.USA.cor20.1[[1]]$Survival.after.blood.draw[MM.comp.USA.cor20.1[[1]]$Other.Primary.AFTER==0]),col=2)
+
+cat(paste('Proportion of censored events = ', round(sum(as.numeric(MM.comp.USA.cor20.1[[1]]$Other.Primary.AFTER)-1)/length(MM.comp.USA.cor20.1[[1]]$Other.Primary.AFTER),2)*100,'%'))
+
+plot(density(MM.comp.USA.cor20.1[[1]]$Survival.after.blood.draw[MM.comp.USA.cor20.1[[1]]$Progression.AFTER==1]),col=1,ylim=c(0,0.8),main='Time to Event comparing Censorship',xlab='Time (years)')
+legend('topleft',c('Progression=1','Progression=0'),col = 1:2,lty = 1)
+lines(density(MM.comp.USA.cor20.1[[1]]$Survival.after.blood.draw[MM.comp.USA.cor20.1[[1]]$Progression.AFTER==0]),col=2)
+
+cat(paste('Proportion of censored events = ', round(sum(as.numeric(MM.comp.USA.cor20.1[[1]]$Progression.AFTER)-1)/length(MM.comp.USA.cor20.1[[1]]$Progression.AFTER),2)*100,'%'))
+
+plot(density(MM.comp.USA.cor20.1[[1]]$Survival.after.blood.draw[MM.comp.USA.cor20.1[[1]]$Died==1]),col=1,ylim=c(0,0.8),main='Time to Event comparing Censorship',xlab='Time (years)')
+legend('topleft',c('Died=1','Died=0'),col = 1:2,lty = 1)
+lines(density(MM.comp.USA.cor20.1[[1]]$Survival.after.blood.draw[MM.comp.USA.cor20.1[[1]]$Died==0]),col=2)
+
+cat(paste('Proportion of censored events = ', round(sum(as.numeric(MM.comp.USA.cor20.1[[1]]$Died)-1)/length(MM.comp.USA.cor20.1[[1]]$Died),2)*100,'%'))
+
+```
+
+The proportion of censorship is relatively low and may cause bias in our estimator from a logistic regression model. Therefore, survival analysis was used to evaluate the outcomes - new primary, progression, and mortality.
+
+```{r Impute, echo=F, message=F, warning=FALSE, comment=NA, include=F}
+excludeVars <- vars.names.MM.AUS[-c(1,4,5,7,9,10,11,12,13,14,15,16,17,28,29,30,31)] # These are the variables to exclude from the auxiliary variables used to impute Breslow and Ulceration determined by removing highly correlated variables.
+impute.var.aux <- vars.names.MM.AUS[c(1,4,5,7,9,10,11,12,13,14,15,16,17,28,29,30,31)] # Variables to be used for imputation. However, among these variables the mice function quickpred will chose auxiliary variables above the correlation threshold (corrcutoff).
+varx.AUS.ulc <- vector('list',length(corrcutoff)) # Save list of variables used to impute and reported after Table 4.
+varx.AUS.bres <- vector('list',length(corrcutoff))
+varx.USA.ulc <- vector('list',length(corrcutoff))
+varx.USA.bres <- vector('list',length(corrcutoff))
+for(i in 1:length(corrcutoff)){
+  varx.AUS.ulc[[i]] <- names(which(quickpred(MM.AUS,mincor=corrcutoff[i],exclude = excludeVars,include = c('Ulceration','Breslow'))[13,]==1)) # variables correlated with ulceration in Australia melanoma group 
+  varx.AUS.bres[[i]] <- names(which(quickpred(MM.AUS,mincor=corrcutoff[i],exclude = excludeVars,include = c('Ulceration','Breslow'))[11,]==1)) # variables correlated with ulceration in Australia melanoma group 
+  varx.USA.ulc[[i]] <- names(which(quickpred(MM.USA,mincor=corrcutoff[i],exclude = excludeVars,include = c('Ulceration','Breslow'))[13,]==1)) # variables correlated with ulceration in Australia melanoma group 
+  varx.USA.bres[[i]] <- names(which(quickpred(MM.USA,mincor=corrcutoff[i],exclude = excludeVars,include = c('Ulceration','Breslow'))[11,]==1)) # variables correlated with ulceration in Australia melanoma group 
+}
+
+blocks.AUS <- make.blocks(MM.AUS, partition = 'scatter') # using the scatter partition each variable is in its own list with a default call type = "type" which will instruct the function to refer to the row name in the predictor matrix as to which variables to be used in the imputation of that variable
+blocks.USA <- make.blocks(MM.USA, partition = 'scatter') # repeat for USA melanoma group
+
+method.AUS <- make.method(MM.AUS,blocks = blocks.AUS) # using the make.blocks object to construct a methods vector of variables with missingness and assigns their default method based on the variable type. Default methods can be replaced with alternatives prior to running mice function
+method.USA <- make.method(MM.USA,blocks = blocks.USA) # repeat for USA
+
+pred.AUS <- vector('list',length(corrcutoff))
+pred.USA <- vector('list',length(corrcutoff))
+for(i in 1:length(corrcutoff)){
+  predAUS <- quickpred(MM.AUS,mincor=corrcutoff[i],exclude = excludeVars,include=c('Ulceration','Breslow')) # variables correlated with ulceration in Australia melanoma group 
+  predAUS[11,] <- ifelse(names(predAUS[11,])%in%varx.AUS.bres[[i]],1,0) # apply correlated variables to impute breslow
+  predAUS[13,] <- ifelse(names(predAUS[13,])%in%varx.AUS.ulc[[i]],1,0)  # apply correlated variables to impute ulceration
+  pred.AUS[[i]] <- predAUS # Note that the output from quickpred is a matrix of 0's and 1's. Rows indicate which variables will be used to impute the variable in the row name. Variable names of the columns with a 1 for each row determines the variable sto be used in imputation of that row named covariate. If a variable has no missing data, then quickpred with insert a row of 0s with the exception of that variable itself. 
+  
+  predUSA <- quickpred(MM.USA,mincor=corrcutoff[i],exclude = excludeVars,include=c('Ulceration','Breslow')) # variables correlated with ulceration in USAtralia melanoma group 
+  predUSA[11,] <- ifelse(names(predUSA[11,])%in%varx.USA.bres[[i]],1,0) # apply correlated variables to breslow
+  predUSA[13,] <- ifelse(names(predUSA[13,])%in%varx.USA.ulc[[i]],1,0)  # apply correlated variables to impute ulceration
+  pred.USA[[i]] <- predUSA # Note that the output from quickpred is a matrix of 0's and 1's. Rows indicate which variables will be used to impute the variable in the row name. Variable names of the columns with a 1 for each row determines the variable sto be used in imputation of that row named covariate. If a variable has no missing data, then quickpred with insert a row of 0s with the exception of that variable itself. 
+}
+pred.AUS <- lapply(pred.AUS, as.matrix) # ensure prediction matrix is a matrix
+pred.USA <- lapply(pred.USA, as.matrix)
+
+MM.mice.AUS.cor20.1 <- vector('list',length(corrcutoff)) # list for mice results
+MM.mice.AUS.cor20.1.factor <- vector('list',length(corrcutoff)) # list for mice results for stage bifurcated 3&4 vs 0-2
+MM.mice.AUS.cor20.1.factor.0.12.34 <- vector('list',length(corrcutoff)) # list for mice results for stage bifurcated 3&4 vs 1&2 vs 0
+MM.comp.AUS.cor20.1 <- vector('list',length(corrcutoff)) # list of all imputed datasets
+MM.comp.AUS.cor20.1.factor <- vector('list',length(corrcutoff)) # list of all imputed datasets stage 2 level
+MM.comp.AUS.cor20.1.factor.0.12.34 <- vector('list',length(corrcutoff)) # list of all imputed datasets stage 3 levels
+MM.mice.AUS.cor20.1.mira <- vector('list',length(corrcutoff)) # list of models for each imputed dataset
+MM.mice.AUS.cor20.1.mira.factor <- vector('list',length(corrcutoff)) # list of models for each imputed dataset stage 2 level
+MM.mice.AUS.cor20.1.mira.factor.0.12.34 <- vector('list',length(corrcutoff)) # list of models for each imputed dataset stage 3 level
+MM.mice.AUS.cor20.1.mira.new.primary <- vector('list',length(corrcutoff)) # list of models for each imputed dataset for outcome new primary in survival analysis
+MM.mice.AUS.cor20.1.mira.progression <- vector('list',length(corrcutoff)) # list of models for each imputed dataset for outcome progression in survival analysis
+MM.mice.AUS.cor20.1.mira.mortality <- vector('list',length(corrcutoff)) # list of models for each imputed dataset for outcome mortality in survival analysis
+MM.mice.AUS.cor20.1.pool <- vector('list',length(corrcutoff)) # list of pooled analysis
+MM.mice.AUS.cor20.1.pool.factor <- vector('list',length(corrcutoff)) # list of pooled analysis stage 2 level
+MM.mice.AUS.cor20.1.pool.factor.0.12.34 <- vector('list',length(corrcutoff)) # list of pooled analysis stage 3 level
+MM.mice.AUS.cor20.1.pool.new.primary <- vector('list',length(corrcutoff)) # list of pooled analysis for survival new primary
+MM.mice.AUS.cor20.1.pool.progression <- vector('list',length(corrcutoff)) # list of pooled analysis for survival progression
+MM.mice.AUS.cor20.1.pool.mortality <- vector('list',length(corrcutoff)) # list of pooled analysis for survival mortality
+cor20.1.AUS <- vector('list',length(corrcutoff)) # list of stage coef for each correlation cutoff
+cor20.1.AUS.factor <- vector('list',length(corrcutoff)) # list of stage coef for each correlation cutoff stage 2 level
+cor20.1.AUS.factor.0.12.34 <- vector('list',length(corrcutoff)) # list of stage coef for each correlation cutoff satge 3 level
+cor20.1.AUS.factor.new.primary <- vector('list',length(corrcutoff)) # list of stage coef for each correlation cutoff new primary
+cor20.1.AUS.factor.progression <- vector('list',length(corrcutoff)) # list of stage coef for each correlation cutoff progression
+cor20.1.AUS.factor.mortality <- vector('list',length(corrcutoff)) # list of stage coef for each correlation cutoff mortality
+MM.AUS.factor <- MM.AUS # need to replace stage in dataset with dichotomized stage variable 
+MM.AUS.factor0.12.34 <- MM.AUS # need to replace stage in dataset with tertiary stage variable 
+MM.AUS.factor$Stage <- factor(ifelse(as.numeric(MM.AUS.factor$Stage)<3,0,1)) # stage as factor 0-4 changes to 1-5 as numeric 
+MM.AUS.factor0.12.34$Stage <- factor(ifelse(as.numeric(MM.AUS.factor0.12.34$Stage)<2,0,ifelse(as.numeric(MM.AUS.factor0.12.34$Stage)>4,2,1))) # tertiary stage variable created
+
+for(i in 1:length(corrcutoff)){
+  MM.mice.AUS.cor20.1[[i]] <- mice(MM.AUS, iterations, predictorMatrix = pred.AUS[[i]], blocks = blocks.AUS, method = method.AUS, vis = 'monotone', seed = 1) # imputation with stage as continuous, predictor matrix indicating which auxiliary variables to impute missing values, block designed as scatter which employs a fully conditional specification and not joint modelling, method indicates what method (logistic regression matching or predictive mean matching) to be used in imputation process, vis determines the order to impute variables (monotone starts with highest percentage of missingness which is Ulceration in our case), seed is set for reproducibilty.
+  MM.mice.AUS.cor20.1.factor[[i]] <- mice(MM.AUS.factor, iterations, predictorMatrix = pred.AUS[[i]], blocks = blocks.AUS, method = method.AUS, vis = 'monotone', seed = 1)
+  MM.mice.AUS.cor20.1.factor.0.12.34[[i]] <- mice(MM.AUS.factor0.12.34, iterations, predictorMatrix = pred.AUS[[i]], blocks = blocks.AUS, method = method.AUS, vis = 'monotone', seed = 1)
+  MM.comp.AUS.cor20.1[[i]] <- complete(MM.mice.AUS.cor20.1[[i]],5) # cont - predictive mean matching, binary - logistic regression matching
+  MM.comp.AUS.cor20.1.factor[[i]] <- complete(MM.mice.AUS.cor20.1.factor[[i]],5) # cont - predictive mean matching, binary - logistic regression matching
+  MM.comp.AUS.cor20.1.factor.0.12.34[[i]] <- complete(MM.mice.AUS.cor20.1.factor.0.12.34[[i]],5) # cont - predictive mean matching, binary - logistic regression matching
+  MM.mice.AUS.cor20.1.mira[[i]] <- with(MM.mice.AUS.cor20.1[[i]],lm(log2CTLA4GAPDH ~ as.numeric(Stage) + Age + Sex + Breslow + Ulceration + Time2Draw + Site))
+  MM.mice.AUS.cor20.1.mira.factor[[i]] <- with(MM.mice.AUS.cor20.1.factor[[i]],lm(log2CTLA4GAPDH ~  Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site))
+  MM.mice.AUS.cor20.1.mira.factor.0.12.34[[i]] <- with(MM.mice.AUS.cor20.1.factor.0.12.34[[i]],lm(log2CTLA4GAPDH ~  Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site))
+  MM.mice.AUS.cor20.1.mira.new.primary[[i]] <- with(MM.mice.AUS.cor20.1[[i]],coxph(Surv(Survival.after.blood.draw, as.numeric(Other.Primary.AFTER)) ~ log2CTLA4GAPDH + as.numeric(Stage) + Sex + Breslow + Ulceration + Site + Time2Draw))
+  MM.mice.AUS.cor20.1.mira.progression[[i]] <- with(MM.mice.AUS.cor20.1[[i]],coxph(Surv(Survival.after.blood.draw, as.numeric(Progression.AFTER)) ~ log2CTLA4GAPDH + as.numeric(Stage) + Sex + Breslow + Ulceration + Site + Time2Draw))
+  MM.mice.AUS.cor20.1.mira.mortality[[i]] <- with(MM.mice.AUS.cor20.1[[i]],coxph(Surv(Survival.after.blood.draw, as.numeric(Died)) ~ log2CTLA4GAPDH + as.numeric(Stage) + Sex + Breslow + Ulceration + Site + Time2Draw))
+  MM.mice.AUS.cor20.1.pool[[i]] <- pool(MM.mice.AUS.cor20.1.mira[[i]])
+  MM.mice.AUS.cor20.1.pool.factor[[i]] <- pool(MM.mice.AUS.cor20.1.mira.factor[[i]])
+  MM.mice.AUS.cor20.1.pool.factor.0.12.34[[i]] <- pool(MM.mice.AUS.cor20.1.mira.factor.0.12.34[[i]])
+  MM.mice.AUS.cor20.1.pool.new.primary[[i]] <- pool(MM.mice.AUS.cor20.1.mira.new.primary[[i]])
+  MM.mice.AUS.cor20.1.pool.progression[[i]] <- pool(MM.mice.AUS.cor20.1.mira.progression[[i]])
+  MM.mice.AUS.cor20.1.pool.mortality[[i]] <- pool(MM.mice.AUS.cor20.1.mira.mortality[[i]])
+  cor20.1.AUS[[i]] <- summary(MM.mice.AUS.cor20.1.pool[[i]])[2,c(1,2,5)]
+  cor20.1.AUS.factor[[i]] <- summary(MM.mice.AUS.cor20.1.pool.factor[[i]])[1:5,c(1,2,5)]
+  cor20.1.AUS.factor.0.12.34[[i]] <- summary(MM.mice.AUS.cor20.1.pool.factor.0.12.34[[i]])[1:3,c(1,2,5)]
+  cor20.1.AUS.factor.new.primary[[i]] <- summary(MM.mice.AUS.cor20.1.pool.new.primary[[i]])[,c(1,2,5)]
+  cor20.1.AUS.factor.progression[[i]] <- summary(MM.mice.AUS.cor20.1.pool.progression[[i]])[,c(1,2,5)]
+  cor20.1.AUS.factor.mortality[[i]] <- summary(MM.mice.AUS.cor20.1.pool.mortality[[i]])[,c(1,2,5)]
+}
+
+stage.AUS.knn <- summary(lm(log2CTLA4GAPDH ~ as.numeric(Stage) + Age + Sex + Breslow + Ulceration + Time2Draw + Site, data=kNN(MM.AUS,variable = c("Breslow","Ulceration"))))$coef[2,c(1,2,4)]
+stage.AUS.knn.factor <- summary(lm(log2CTLA4GAPDH ~ Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site, data=kNN(MM.AUS.factor,variable = c("Breslow","Ulceration"))))$coef[2,c(1,2,4)]
+stage.AUS.knn.factor0.12.34 <- summary(lm(log2CTLA4GAPDH ~ Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site, data=kNN(MM.AUS.factor0.12.34,variable = c("Breslow","Ulceration"))))$coef[2:3,c(1,2,4)]
+
+MM.mice.USA.cor20.1 <- vector('list',length(corrcutoff))
+MM.mice.USA.cor20.1.factor <- vector('list',length(corrcutoff))
+MM.mice.USA.cor20.1.factor.0.12.34 <- vector('list',length(corrcutoff))
+MM.comp.USA.cor20.1 <- vector('list',length(corrcutoff))
+MM.comp.USA.cor20.1.factor <- vector('list',length(corrcutoff))
+MM.comp.USA.cor20.1.factor.0.12.34 <- vector('list',length(corrcutoff))
+MM.mice.USA.cor20.1.mira <- vector('list',length(corrcutoff))
+MM.mice.USA.cor20.1.mira.factor <- vector('list',length(corrcutoff))
+MM.mice.USA.cor20.1.mira.factor.0.12.34 <- vector('list',length(corrcutoff))
+MM.mice.USA.cor20.1.mira.new.primary <- vector('list',length(corrcutoff))
+MM.mice.USA.cor20.1.mira.progression <- vector('list',length(corrcutoff))
+MM.mice.USA.cor20.1.mira.mortality <- vector('list',length(corrcutoff))
+MM.mice.USA.cor20.1.pool <- vector('list',length(corrcutoff))
+MM.mice.USA.cor20.1.pool.factor <- vector('list',length(corrcutoff))
+MM.mice.USA.cor20.1.pool.factor.0.12.34 <- vector('list',length(corrcutoff))
+MM.mice.USA.cor20.1.pool.new.primary <- vector('list',length(corrcutoff))
+MM.mice.USA.cor20.1.pool.progression <- vector('list',length(corrcutoff))
+MM.mice.USA.cor20.1.pool.mortality <- vector('list',length(corrcutoff))
+cor20.1.USA <- vector('list',length(corrcutoff))
+cor20.1.USA.factor <- vector('list',length(corrcutoff))
+cor20.1.USA.factor.0.12.34 <- vector('list',length(corrcutoff))
+cor20.1.USA.factor.new.primary <- vector('list',length(corrcutoff))
+cor20.1.USA.factor.progression <- vector('list',length(corrcutoff))
+cor20.1.USA.factor.mortality <- vector('list',length(corrcutoff))
+MM.USA.factor <- MM.USA
+MM.USA.factor0.12.34 <- MM.USA
+MM.USA.factor$Stage <- factor(ifelse(as.numeric(MM.USA.factor$Stage)<3,0,1))
+MM.USA.factor0.12.34$Stage <- factor(ifelse(as.numeric(MM.USA.factor0.12.34$Stage)<2,0,ifelse(as.numeric(MM.USA.factor0.12.34$Stage)>4,2,1)))
+
+for(i in 1:length(corrcutoff)){
+  MM.mice.USA.cor20.1[[i]] <- mice(MM.USA, iterations, predictorMatrix = pred.USA[[i]], blocks = blocks.USA, method = method.USA, vis = 'monotone', seed = 1)
+  MM.mice.USA.cor20.1.factor[[i]] <- mice(MM.USA.factor, iterations, predictorMatrix = pred.USA[[i]], blocks = blocks.USA, method = method.USA, vis = 'monotone', seed = 1)
+  MM.mice.USA.cor20.1.factor.0.12.34[[i]] <- mice(MM.USA.factor0.12.34, iterations, predictorMatrix = pred.USA[[i]], blocks = blocks.USA, method = method.USA, vis = 'monotone', seed = 1)
+  MM.comp.USA.cor20.1[[i]] <- complete(MM.mice.USA.cor20.1[[i]],5) # cont - predictive mean matching, binary - logistic regression matching
+  MM.comp.USA.cor20.1.factor[[i]] <- complete(MM.mice.USA.cor20.1.factor[[i]],5) # cont - predictive mean matching, binary - logistic regression matching
+  MM.comp.USA.cor20.1.factor.0.12.34[[i]] <- complete(MM.mice.USA.cor20.1.factor[[i]],5) # cont - predictive mean matching, binary - logistic regression matching
+  MM.mice.USA.cor20.1.mira[[i]] <- with(MM.mice.USA.cor20.1[[i]],lm(log2CTLA4GAPDH ~ as.numeric(Stage) + Age + Sex + Breslow + Ulceration + Time2Draw + Site))
+  MM.mice.USA.cor20.1.mira.factor[[i]] <- with(MM.mice.USA.cor20.1.factor[[i]],lm(log2CTLA4GAPDH ~  Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site))
+  MM.mice.USA.cor20.1.mira.factor.0.12.34[[i]] <- with(MM.mice.USA.cor20.1.factor.0.12.34[[i]],lm(log2CTLA4GAPDH ~  Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site))
+  MM.mice.USA.cor20.1.mira.new.primary[[i]] <- with(MM.mice.USA.cor20.1[[i]],coxph(Surv(Survival.after.blood.draw, as.numeric(Other.Primary.AFTER)) ~ log2CTLA4GAPDH + as.numeric(Stage) + Sex + Breslow + Ulceration + Site + Time2Draw))
+  MM.mice.USA.cor20.1.mira.progression[[i]] <- with(MM.mice.USA.cor20.1[[i]],coxph(Surv(Survival.after.blood.draw, as.numeric(Progression.AFTER)) ~ log2CTLA4GAPDH + as.numeric(Stage) + Sex + Breslow + Ulceration + Site + Time2Draw))
+  MM.mice.USA.cor20.1.mira.mortality[[i]] <- with(MM.mice.USA.cor20.1[[i]],coxph(Surv(Survival.after.blood.draw, as.numeric(Died)) ~ log2CTLA4GAPDH + as.numeric(Stage) + Sex + Breslow + Ulceration + Site + Time2Draw))
+  MM.mice.USA.cor20.1.pool[[i]] <- pool(MM.mice.USA.cor20.1.mira[[i]])
+  MM.mice.USA.cor20.1.pool.factor[[i]] <- pool(MM.mice.USA.cor20.1.mira.factor[[i]])
+  MM.mice.USA.cor20.1.pool.factor.0.12.34[[i]] <- pool(MM.mice.USA.cor20.1.mira.factor.0.12.34[[i]])
+  MM.mice.USA.cor20.1.pool.new.primary[[i]] <- pool(MM.mice.USA.cor20.1.mira.new.primary[[i]])
+  MM.mice.USA.cor20.1.pool.progression[[i]] <- pool(MM.mice.USA.cor20.1.mira.progression[[i]])
+  MM.mice.USA.cor20.1.pool.mortality[[i]] <- pool(MM.mice.USA.cor20.1.mira.mortality[[i]])
+  cor20.1.USA[[i]] <- summary(MM.mice.USA.cor20.1.pool[[i]])[2,c(1,2,5)]
+  cor20.1.USA.factor[[i]] <- summary(MM.mice.USA.cor20.1.pool.factor[[i]])[1:5,c(1,2,5)]
+  cor20.1.USA.factor.0.12.34[[i]] <- summary(MM.mice.USA.cor20.1.pool.factor.0.12.34[[i]])[1:3,c(1,2,5)]
+  cor20.1.USA.factor.new.primary[[i]] <- summary(MM.mice.USA.cor20.1.pool.new.primary[[i]])[,c(1,2,5)]
+  cor20.1.USA.factor.progression[[i]] <- summary(MM.mice.USA.cor20.1.pool.progression[[i]])[,c(1,2,5)]
+  cor20.1.USA.factor.mortality[[i]] <- summary(MM.mice.USA.cor20.1.pool.mortality[[i]])[,c(1,2,5)]
+}
+
+stage.USA.knn <- summary(lm(log2CTLA4GAPDH ~ as.numeric(Stage) + Age + Sex + Breslow + Ulceration + Time2Draw + Site, data=kNN(MM.USA,variable = c("Breslow","Ulceration"))))$coef[2,c(1,2,4)]
+stage.USA.knn.factor <- summary(lm(log2CTLA4GAPDH ~ Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site, data=kNN(MM.USA.factor,variable = c("Breslow","Ulceration"))))$coef[2,c(1,2,4)]
+stage.USA.knn.factor0.12.34 <- summary(lm(log2CTLA4GAPDH ~ Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site, data=kNN(MM.USA.factor0.12.34,variable = c("Breslow","Ulceration"))))$coef[2:3,c(1,2,4)]
+
+```
+
+### __Table 4__
+
+### Compare Multiple Imputation by Chained Equations to K-Nearest Neighbor
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=T,eval=T}
+AUS.stage <- data.frame(Est=round(cor20.1.AUS[[1]][1],2),CI=paste('(',round(cor20.1.AUS[[1]][1]-1.96*cor20.1.AUS[[1]][2],2),',',round(cor20.1.AUS[[1]][1]+1.96*cor20.1.AUS[[1]][2],2),')'),round(cor20.1.AUS[[1]][3],3))
+colnames(AUS.stage) <- c('Beta','95% CI','p')
+rownames(AUS.stage) <- c('AUS Stage (continuous) Auxiliary Corr 0.05')
+
+AUS.stage.cor20 <- data.frame(Est=round(cor20.1.AUS[[2]][1],2),CI=paste('(',round(cor20.1.AUS[[2]][1]-1.96*cor20.1.AUS[[1]][2],2),',',round(cor20.1.AUS[[2]][1]+1.96*cor20.1.AUS[[2]][2],2),')'),round(cor20.1.AUS[[2]][3],3))
+colnames(AUS.stage.cor20) <- c('Beta','95% CI','p')
+rownames(AUS.stage.cor20) <- c('AUS Stage (continuous) Auxiliary Corr 0.20')
+
+AUS.stage.02 <- data.frame(Est=round(cor20.1.AUS.factor[[1]][2,1],2),CI=paste('(',round(cor20.1.AUS.factor[[1]][2,1]-1.96*cor20.1.AUS.factor[[1]][2,2],2),',',round(cor20.1.AUS.factor[[1]][2,1]+1.96*cor20.1.AUS.factor[[1]][2,2],2),')'),p=round(cor20.1.AUS.factor[[1]][2,3],3))
+colnames(AUS.stage.02) <- c('Beta','95% CI','p')
+rownames(AUS.stage.02) <- c('AUS Stage 3&4 vs 0-2 (MICE)')
+
+AUS.stage.CI <- apply(cor20.1.AUS.factor.0.12.34[[1]][2:3,],1,function(x)  paste('(',round(x[1]-1.96*x[2],2),',',round(x[1]+1.96*x[2],2),')'))
+AUS.stage.beta <- apply(cor20.1.AUS.factor.0.12.34[[1]][2:3,],1,function(x) round(x[1],2) )
+AUS.stage.p <- apply(cor20.1.AUS.factor.0.12.34[[1]][2:3,],1,function(x) round(x[3],3) )
+AUS.stage0.12.34 <- data.frame(AUS.stage.beta,AUS.stage.CI,AUS.stage.p)
+rownames(AUS.stage0.12.34) <- c('AUS Stage 1&2 vs 0 (MICE)','AUS Stage 3&4 vs 0 (MICE)')
+colnames(AUS.stage0.12.34) <- c('Beta','95% CI','p')
+
+AUS.stage.knn <- data.frame(Est=round(stage.AUS.knn[1],2),CI=paste('(',round(stage.AUS.knn[1]-1.96*stage.AUS.knn[2],2),',',round(stage.AUS.knn[1]+1.96*stage.AUS.knn[2],2),')'),round(stage.AUS.knn[3],3))
+colnames(AUS.stage.knn) <- c('Beta','95% CI','p')
+rownames(AUS.stage.knn) <- c('AUS Stage (KNN)')
+
+AUS.stage.knn.factor <- data.frame(Est=round(stage.AUS.knn.factor[1],2),CI=paste('(',round(stage.AUS.knn.factor[1]-1.96*stage.AUS.knn.factor[2],2),',',round(stage.AUS.knn.factor[1]+1.96*stage.AUS.knn.factor[2],2),')'),round(stage.AUS.knn.factor[3],3))
+colnames(AUS.stage.knn.factor) <- c('Beta','95% CI','p')
+rownames(AUS.stage.knn.factor) <- c('AUS Stage 3&4 vs 0-2 (KNN)')
+
+AUS.stage.knn.factor0.12.34.CI <- apply(stage.AUS.knn.factor0.12.34,1,function(x)  paste('(',round(x[1]-1.96*x[2],2),',',round(x[1]+1.96*x[2],2),')'))
+AUS.stage.knn.factor0.12.34.beta <- apply(stage.AUS.knn.factor0.12.34,1,function(x) round(x[1],2) )
+AUS.stage.knn.factor0.12.34.p <- apply(stage.AUS.knn.factor0.12.34,1,function(x) round(x[3],3) )
+AUS.stage.knn.factor0.12.34 <- data.frame(AUS.stage.knn.factor0.12.34.beta,AUS.stage.knn.factor0.12.34.CI,AUS.stage.knn.factor0.12.34.p)
+rownames(AUS.stage.knn.factor0.12.34) <- c('AUS Stage 1&2 vs 0 (KNN)','AUS Stage 3&4 vs 0 (KNN)')
+colnames(AUS.stage.knn.factor0.12.34) <- c('Beta','95% CI','p')
+
+# USA
+USA.stage <- data.frame(Est=round(cor20.1.USA[[1]][1],2),CI=paste('(',round(cor20.1.USA[[1]][1]-1.96*cor20.1.USA[[1]][2],2),',',round(cor20.1.USA[[1]][1]+1.96*cor20.1.USA[[1]][2],2),')'),round(cor20.1.USA[[1]][3],3))
+colnames(USA.stage) <- c('Beta','95% CI','p')
+rownames(USA.stage) <- c('USA Stage (continuous) Auxiliary Corr 0.05')
+
+USA.stage.cor20 <- data.frame(Est=round(cor20.1.USA[[2]][1],2),CI=paste('(',round(cor20.1.USA[[2]][1]-1.96*cor20.1.USA[[1]][2],2),',',round(cor20.1.USA[[2]][1]+1.96*cor20.1.USA[[2]][2],2),')'),round(cor20.1.USA[[2]][3],3))
+colnames(USA.stage.cor20) <- c('Beta','95% CI','p')
+rownames(USA.stage.cor20) <- c('USA Stage (continuous) Auxiliary Corr 0.20')
+
+USA.stage.02 <- data.frame(Est=round(cor20.1.USA.factor[[1]][2,1],2),CI=paste('(',round(cor20.1.USA.factor[[1]][2,1]-1.96*cor20.1.USA.factor[[1]][2,2],2),',',round(cor20.1.USA.factor[[1]][2,1]+1.96*cor20.1.USA.factor[[1]][2,2],2),')'),p=round(cor20.1.USA.factor[[1]][2,3],3))
+colnames(USA.stage.02) <- c('Beta','95% CI','p')
+rownames(USA.stage.02) <- c('USA Stage 3&4 vs 0-2 (MICE)')
+
+USA.stage.CI <- apply(cor20.1.USA.factor.0.12.34[[1]][2:3,],1,function(x)  paste('(',round(x[1]-1.96*x[2],2),',',round(x[1]+1.96*x[2],2),')'))
+USA.stage.beta <- apply(cor20.1.USA.factor.0.12.34[[1]][2:3,],1,function(x) round(x[1],2) )
+USA.stage.p <- apply(cor20.1.USA.factor.0.12.34[[1]][2:3,],1,function(x) round(x[3],3) )
+USA.stage0.12.34 <- data.frame(USA.stage.beta,USA.stage.CI,USA.stage.p)
+rownames(USA.stage0.12.34) <- c('USA Stage 1&2 vs 0 (MICE)','USA Stage 3&4 vs 0 (MICE)')
+colnames(USA.stage0.12.34) <- c('Beta','95% CI','p')
+
+USA.stage.knn <- data.frame(Est=round(stage.USA.knn[1],2),CI=paste('(',round(stage.USA.knn[1]-1.96*stage.USA.knn[2],2),',',round(stage.USA.knn[1]+1.96*stage.USA.knn[2],2),')'),round(stage.USA.knn[3],3))
+colnames(USA.stage.knn) <- c('Beta','95% CI','p')
+rownames(USA.stage.knn) <- c('USA Stage (KNN)')
+
+USA.stage.knn.factor <- data.frame(Est=round(stage.USA.knn.factor[1],2),CI=paste('(',round(stage.USA.knn.factor[1]-1.96*stage.USA.knn.factor[2],2),',',round(stage.USA.knn.factor[1]+1.96*stage.USA.knn.factor[2],2),')'),round(stage.USA.knn.factor[3],3))
+colnames(USA.stage.knn.factor) <- c('Beta','95% CI','p')
+rownames(USA.stage.knn.factor) <- c('USA Stage 3&4 vs 0-2 (KNN)')
+
+USA.stage.knn.factor0.12.34.CI <- apply(stage.USA.knn.factor0.12.34,1,function(x)  paste('(',round(x[1]-1.96*x[2],2),',',round(x[1]+1.96*x[2],2),')'))
+USA.stage.knn.factor0.12.34.beta <- apply(stage.USA.knn.factor0.12.34,1,function(x) round(x[1],2) )
+USA.stage.knn.factor0.12.34.p <- apply(stage.USA.knn.factor0.12.34,1,function(x) round(x[3],3) )
+USA.stage.knn.factor0.12.34 <- data.frame(USA.stage.knn.factor0.12.34.beta,USA.stage.knn.factor0.12.34.CI,USA.stage.knn.factor0.12.34.p)
+rownames(USA.stage.knn.factor0.12.34) <- c('USA Stage 1&2 vs 0 (KNN)','USA Stage 3&4 vs 0 (KNN)')
+colnames(USA.stage.knn.factor0.12.34) <- c('Beta','95% CI','p')
+
+Stage.final <- rbind(AUS.stage,AUS.stage.cor20,AUS.stage.knn,AUS.stage.02,AUS.stage.knn.factor,AUS.stage0.12.34,AUS.stage.knn.factor0.12.34,USA.stage,USA.stage.cor20,USA.stage.knn,USA.stage.02,USA.stage.knn.factor,USA.stage0.12.34,USA.stage.knn.factor0.12.34)
+
+kable(Stage.final) %>% kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),position="center") %>%
+  row_spec(0,align = 'l') %>% row_spec(1:18,align = c('l')) %>% 
+  group_rows("AUS Stage (MICE)",1,2) %>%
+  group_rows("AUS Stage (KNN)",3,3) %>%
+  group_rows("AUS Stage 3-4 vs 0-2 (MICE)",4,4) %>%
+  group_rows("AUS Stage 3-4 vs 0-2 (KNN)",5,5) %>%
+  group_rows("AUS Stage 3-4 vs 1-2 vs 0 (MICE)",6,7) %>%
+  group_rows("AUS Stage 3-4 vs 1-2 vs 0 (KNN)",8,9) %>%
+  group_rows("USA Stage (MICE)",10,11) %>%
+  group_rows("USA Stage (KNN)",12,12) %>%
+  group_rows("USA Stage 3-4 vs 0-2 (MICE)",13,13) %>%
+  group_rows("USA Stage 3-4 vs 0-2 (KNN)",14,14) %>%
+  group_rows("USA Stage 3-4 vs 1-2 vs 0 (MICE)",15,16) %>%
+  group_rows("USA Stage 3-4 vs 1-2 vs 0 (KNN)",17,18) %>%
+  footnote(general = "Comparing Hazard Ratio (HR) of Stage from various fitted models. Two different methods (MICE and KNN) and two different set of auxiliary variables to impute Breslow depth and Ulceration had very similar point estimates for stage with a range of -0.18 to -0.20 for AUS and -0.14 to -0.17 for USA. When stage is dichotomized (3&4 vs 0-2), AUS beta estimates for stage using MICE and KNN are -0.47 and -0.45, respectively, and USA beta estimates for stage using mice and KNN are both -0.14. Tertiary grouping (3&4 vs 1%2 vs 0) deciphered -0.33 and -0.22 (1&2 vs 0) for both MICE and KNN in AUS and USA, respectively. When comparing stages 3&4 to 0 in the tertiary grouping, AUS had -0.57 and -0.56 and USA had -0.99 and -1.00 for MICE and KNN, respectively.")
+
+```
+
+#### Auxiliary Variables Used to Impute Breslow Depth correlated above 0.05 for AUS
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=T,eval=T}
+kable(varx.AUS.bres[[1]])
+```
+
+#### Auxiliary Variables Used to Impute Breslow Depth correlated above 0.20 for AUS
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=T,eval=T}
+kable(varx.AUS.bres[[2]])
+```
+
+#### Auxiliary Variables Used to Impute Ulceration correlated above 0.05 for AUS
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=T,eval=T}
+kable(varx.AUS.ulc[[1]])
+```
+
+#### Auxiliary Variables Used to Impute Ulceration correlated above 0.20 for AUS
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=T,eval=T}
+kable(varx.AUS.ulc[[2]])
+```
+
+#### Auxiliary Variables Used to Impute Breslow Depth correlated above 0.05 for USA
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=T,eval=T}
+kable(varx.USA.bres[[1]])
+```
+
+#### Auxiliary Variables Used to Impute Breslow Depth correlated above 0.20 for USA
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=T,eval=T}
+kable(varx.USA.bres[[2]])
+```
+
+#### Auxiliary Variables Used to Impute Ulceration correlated above 0.05 for USA
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=T,eval=T}
+kable(varx.USA.ulc[[1]])
+```
+
+#### Auxiliary Variables Used to Impute Ulceration correlated above 0.20 for USA
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=T,eval=T}
+kable(varx.USA.ulc[[2]])
+```
+
+#### __Testing Influence under MNAR assumption__
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=T,eval=T}
+cat("AUS Breslow increase imputed values by a factor")
+ini <- mice(MM.AUS[,-c(22:27)], maxit = 0, print = FALSE) 
+post <- ini$post 
+k <- seq(1, 1.5, 0.1)
+est <- vector("list", length(k)) 
+for (i in 1:length(k)) {
+  post["Breslow"] <- paste("imp[[j]][,i] <-", k[i], "* imp[[j]][,i]")
+  imp <- mice(MM.AUS[,-c(22:27)], post = post, seed = 10, print = FALSE, maxit = 20)
+  fit <- with(imp, lm(log2CTLA4GAPDH ~ as.numeric(Stage) + Age + Sex + Breslow + Ulceration + Time2Draw + Site))
+  est[[i]] <- summary(pool(fit)) }
+
+AUS.bres.inc <- as.data.frame(t(t(sapply(est,function(x) x[2,1]))))
+rownames(AUS.bres.inc) <- c("Imputed values x 1","Imputed values x 1.1","Imputed values x 1.2","Imputed values x 1.3","Imputed values x 1.4","Imputed values x 1.5")
+colnames(AUS.bres.inc) <- "Stage (Beta)"
+AUS.bres.inc <- apply(AUS.bres.inc,2,function(x) round(x,3))
+AUS.bres.inc
+
+cat("AUS Breslow decrease imputed values by a factor")
+ini <- mice(MM.AUS[,-c(22:27)], maxit = 0, print = FALSE) 
+post <- ini$post 
+k <- seq(1, 0.5, -0.1)
+est <- vector("list", length(k)) 
+for (i in 1:length(k)) {
+  post["Breslow"] <- paste("imp[[j]][,i] <-", k[i], "* imp[[j]][,i]")
+  imp <- mice(MM.AUS[,-c(22:27)], post = post, seed = 10, print = FALSE, maxit = 20)
+  fit <- with(imp, lm(log2CTLA4GAPDH ~ as.numeric(Stage) + Age + Sex + Breslow + Ulceration + Time2Draw + Site))
+  est[[i]] <- summary(pool(fit)) }
+
+AUS.bres.dec <- as.data.frame(t(t(sapply(est,function(x) x[2,1]))))
+rownames(AUS.bres.dec) <- c("Imputed values x 1","Imputed values x 0.9","Imputed values x 0.8","Imputed values x 0.7","Imputed values x 0.6","Imputed values x 0.5")
+colnames(AUS.bres.dec) <- "Stage (Beta)"
+AUS.bres.dec <- apply(AUS.bres.dec,2,function(x) round(x,3))
+AUS.bres.dec
+
+cat("USA Breslow increase imputed values by a factor")
+ini <- mice(MM.USA[,-c(22:27)], maxit = 0, print = FALSE) 
+post <- ini$post 
+k <- seq(1, 1.5, 0.1)
+est <- vector("list", length(k)) 
+for (i in 1:length(k)) {
+  post["Breslow"] <- paste("imp[[j]][,i] <-", k[i], "* imp[[j]][,i]")
+  imp <- mice(MM.USA[,-c(22:27)], post = post, seed = 10, print = FALSE, maxit = 20)
+  fit <- with(imp, lm(log2CTLA4GAPDH ~ as.numeric(Stage) + Age + Sex + Breslow + Ulceration + Time2Draw + Site))
+  est[[i]] <- summary(pool(fit)) }
+
+USA.bres.inc <- as.data.frame(t(t(sapply(est,function(x) x[2,1]))))
+rownames(USA.bres.inc) <- c("Imputed values x 1","Imputed values x 1.1","Imputed values x 1.2","Imputed values x 1.3","Imputed values x 1.4","Imputed values x 1.5")
+colnames(USA.bres.inc) <- "Stage (Beta)"
+USA.bres.inc <- apply(USA.bres.inc,2,function(x) round(x,3))
+USA.bres.inc
+
+cat("USA Breslow decrease imputed values by a factor")
+ini <- mice(MM.USA[,-c(22:27)], maxit = 0, print = FALSE) 
+post <- ini$post 
+k <- seq(1, 0.5, -0.1)
+est <- vector("list", length(k)) 
+for (i in 1:length(k)) {
+  post["Breslow"] <- paste("imp[[j]][,i] <-", k[i], "* imp[[j]][,i]")
+  imp <- mice(MM.USA[,-c(22:27)], post = post, seed = 10, print = FALSE, maxit = 20)
+  fit <- with(imp, lm(log2CTLA4GAPDH ~ as.numeric(Stage) + Age + Sex + Breslow + Ulceration + Time2Draw + Site))
+  est[[i]] <- summary(pool(fit)) }
+
+USA.bres.dec <- as.data.frame(t(t(sapply(est,function(x) x[2,1]))))
+rownames(USA.bres.dec) <- c("Imputed values x 1","Imputed values x 0.9","Imputed values x 0.8","Imputed values x 0.7","Imputed values x 0.6","Imputed values x 0.5")
+colnames(USA.bres.dec) <- "Stage (Beta)"
+USA.bres.dec <- apply(USA.bres.dec,2,function(x) round(x,3))
+USA.bres.dec
+```
+
+The influence of increasing/decreasing Breslow imputed values for AUS and USA minimally decreased/increased the point estimate for stage for both AUS and USA. Since the influence under these scenarios is small, then the analysis is said to be robust against the investigated violations of the MAR mechanism.
+
+### __Time to New Primary for Australia__
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=T,eval=T}
+AUS.new.CI <- apply(cor20.1.AUS.factor.new.primary[[1]],1,function(x)  paste('(',round(exp(x[1]-1.96*x[2]),2),',',round(exp(x[1]+1.96*x[2]),2),')'))
+AUS.new.beta <- apply(cor20.1.AUS.factor.new.primary[[1]],1,function(x) round(exp(x[1]),2) )
+AUS.new.p <- apply(cor20.1.AUS.factor.new.primary[[1]],1,function(x) round(x[3],3) )
+AUS.new <- data.frame(AUS.new.beta,AUS.new.CI,AUS.new.p)
+colnames(AUS.new) <- c('HR','95% CI','p')
+kable(AUS.new) %>% kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),position="center") 
+```
+
+### __Time to Progression for Australia__
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=T,eval=T}
+AUS.progression.CI <- apply(cor20.1.AUS.factor.progression[[1]],1,function(x)  paste('(',round(exp(x[1]-1.96*x[2]),2),',',round(exp(x[1]+1.96*x[2]),2),')'))
+AUS.progression.beta <- apply(cor20.1.AUS.factor.progression[[1]],1,function(x) round(exp(x[1]),2) )
+AUS.progression.p <- apply(cor20.1.AUS.factor.progression[[1]],1,function(x) round(x[3],3) )
+AUS.progression <- data.frame(AUS.progression.beta,AUS.progression.CI,AUS.progression.p)
+colnames(AUS.progression) <- c('HR','95% CI','p')
+kable(AUS.progression) %>% kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),position="center") 
+```
+
+### __Time to Death for Australia__
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=T,eval=T}
+AUS.mortality.CI <- apply(cor20.1.AUS.factor.mortality[[1]],1,function(x)  paste('(',round(exp(x[1]-1.96*x[2]),2),',',round(exp(x[1]+1.96*x[2]),2),')'))
+AUS.mortality.beta <- apply(cor20.1.AUS.factor.mortality[[1]],1,function(x) round(exp(x[1]),2) )
+AUS.mortality.p <- apply(cor20.1.AUS.factor.mortality[[1]],1,function(x) round(x[3],3) )
+AUS.mortality <- data.frame(AUS.mortality.beta,AUS.mortality.CI,AUS.mortality.p)
+colnames(AUS.mortality) <- c('HR','95% CI','p')
+kable(AUS.mortality) %>% kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),position="center") 
+```
+
+### __Time to New Primary for USA__
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=T,eval=T}
+USA.new.CI <- apply(cor20.1.USA.factor.new.primary[[1]],1,function(x)  paste('(',round(exp(x[1]-1.96*x[2]),2),',',round(exp(x[1]+1.96*x[2]),2),')'))
+USA.new.beta <- apply(cor20.1.USA.factor.new.primary[[1]],1,function(x) round(exp(x[1]),2) )
+USA.new.p <- apply(cor20.1.USA.factor.new.primary[[1]],1,function(x) round(x[3],3) )
+USA.new <- data.frame(USA.new.beta,USA.new.CI,USA.new.p)
+colnames(USA.new) <- c('HR','95% CI','p')
+kable(USA.new) %>% kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),position="center") 
+```
+
+### __Time to Progression for USA__
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=T,eval=T}
+USA.progression.CI <- apply(cor20.1.USA.factor.progression[[1]],1,function(x)  paste('(',round(exp(x[1]-1.96*x[2]),2),',',round(exp(x[1]+1.96*x[2]),2),')'))
+USA.progression.beta <- apply(cor20.1.USA.factor.progression[[1]],1,function(x) round(exp(x[1]),2) )
+USA.progression.p <- apply(cor20.1.USA.factor.progression[[1]],1,function(x) round(x[3],3) )
+USA.progression <- data.frame(USA.progression.beta,USA.progression.CI,USA.progression.p)
+colnames(USA.progression) <- c('HR','95% CI','p')
+kable(USA.progression) %>% kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),position="center") 
+```
+
+### __Time to Death for USA__
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=T,eval=T}
+USA.mortality.CI <- apply(cor20.1.USA.factor.mortality[[1]],1,function(x)  paste('(',round(exp(x[1]-1.96*x[2]),2),',',round(exp(x[1]+1.96*x[2]),2),')'))
+USA.mortality.beta <- apply(cor20.1.USA.factor.mortality[[1]],1,function(x) round(exp(x[1]),2) )
+USA.mortality.p <- apply(cor20.1.USA.factor.mortality[[1]],1,function(x) round(x[3],3) )
+USA.mortality <- data.frame(USA.mortality.beta,USA.mortality.CI,USA.mortality.p)
+colnames(USA.mortality) <- c('HR','95% CI','p')
+kable(USA.mortality) %>% kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),position="center") 
+```
+
+
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=F,eval=F}
+# Previous work to determine best fit using model comparisons for pooled datasets.
+
+# The variables Died and Clark's level are highly correlated with Stage so they shouldn't be in the final model
+fit1.stage <-with(MM.mice.AUS.cor20.1.factor[[1]],lm(log2CTLA4GAPDH ~ Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site + log2IL37U6 + Death.Melanoma.Related + Survival.after.blood.draw + Radiation.AFTER.blood.draw + Melanoma.specific.10.year.mortality +  Other.NON.Skin.Cancer + Other.Primary.AFTER + Survival.time + Progression.prior))
+fit2.stage <-with(MM.mice.AUS.cor20.1.factor[[1]],lm(log2CTLA4GAPDH ~ Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site + Death.Melanoma.Related + Melanoma.specific.10.year.mortality + Radiation.AFTER.blood.draw + Progression.prior + Survival.time + Other.Primary.AFTER + Other.NON.Skin.Cancer))
+fit3.stage <-with(MM.mice.AUS.cor20.1.factor[[1]],lm(log2CTLA4GAPDH ~ Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site + Death.Melanoma.Related + Melanoma.specific.10.year.mortality + Progression.prior))
+fit4.stage <-with(MM.mice.AUS.cor20.1.factor[[1]],lm(log2CTLA4GAPDH ~ Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site))
+```
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=F,eval=F}
+
+pool.compare(fit1,fit2)
+pool.compare(fit2,fit3)
+pool.compare(fit3,fit4)
+pool.compare(fit2,fit4)
+pool.compare(fit1,fit4)
+# Fit4 has best fit for corr 0.05
+summary(pool(fit4))
+fit.05 <- fit4
+
+pool.compare(fit1.stage,fit2.stage)
+pool.compare(fit2.stage,fit3.stage)
+pool.compare(fit3.stage,fit4.stage)
+pool.compare(fit2.stage,fit4.stage)
+pool.compare(fit1.stage,fit4.stage)
+# Fit4 has best fit for corr 0.05 stage
+summary(pool(fit4.stage))
+fit.05.stage <- fit4.stage # stage 3 & 4 are significant
+
+#corr 0.1
+fit1 <-with(MM.mice.AUS.cor20.1[[2]],lm(log2CTLA4GAPDH ~ as.numeric(Stage) + Age + Sex + Breslow + Ulceration + Time2Draw + Site + log2IL37U6 + Death.Melanoma.Related + Survival.after.blood.draw + Radiation.AFTER.blood.draw + Melanoma.specific.10.year.mortality + Other.NON.Skin.Cancer + Other.Primary.AFTER + Survival.time + Progression.prior))
+fit2 <-with(MM.mice.AUS.cor20.1[[2]],lm(log2CTLA4GAPDH ~ as.numeric(Stage) + Age + Sex + Breslow + Ulceration + Time2Draw + Site + Death.Melanoma.Related + Melanoma.specific.10.year.mortality + Radiation.AFTER.blood.draw + Progression.prior + Survival.time + Other.Primary.AFTER + Other.NON.Skin.Cancer))
+fit3 <-with(MM.mice.AUS.cor20.1[[2]],lm(log2CTLA4GAPDH ~ as.numeric(Stage) + Age + Sex + Breslow + Ulceration + Time2Draw + Site + Death.Melanoma.Related + Melanoma.specific.10.year.mortality +  Progression.prior))
+fit4 <-with(MM.mice.AUS.cor20.1[[2]],lm(log2CTLA4GAPDH ~ as.numeric(Stage) + Age + Sex + Breslow + Ulceration + Time2Draw + Site))
+
+fit1.stage <-with(MM.mice.AUS.cor20.1.factor[[2]],lm(log2CTLA4GAPDH ~ Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site + log2IL37U6 + Death.Melanoma.Related + Survival.after.blood.draw + Radiation.AFTER.blood.draw + Melanoma.specific.10.year.mortality + Other.NON.Skin.Cancer + Other.Primary.AFTER + Survival.time + Progression.prior))
+fit2.stage <-with(MM.mice.AUS.cor20.1.factor[[2]],lm(log2CTLA4GAPDH ~ Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site + Death.Melanoma.Related + Melanoma.specific.10.year.mortality + Radiation.AFTER.blood.draw + Progression.prior + Survival.time + Other.Primary.AFTER + Other.NON.Skin.Cancer))
+fit3.stage <-with(MM.mice.AUS.cor20.1.factor[[2]],lm(log2CTLA4GAPDH ~ Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site + Death.Melanoma.Related + Melanoma.specific.10.year.mortality +  Progression.prior))
+fit4.stage <-with(MM.mice.AUS.cor20.1.factor[[2]],lm(log2CTLA4GAPDH ~ Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site))
+```
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=F,eval=F}
+
+pool.compare(fit1,fit2)
+pool.compare(fit2,fit3)
+pool.compare(fit3,fit4)
+pool.compare(fit2,fit4)
+pool.compare(fit1,fit4)
+
+# Fit4 has best fit for corr 0.1
+summary(pool(fit4))
+fit.10 <- fit4
+
+pool.compare(fit1.stage,fit2.stage)
+pool.compare(fit2.stage,fit3.stage)
+pool.compare(fit3.stage,fit4.stage)
+pool.compare(fit2.stage,fit4.stage)
+pool.compare(fit1.stage,fit4.stage)
+# Fit4 has best fit for corr 0.1 stage
+summary(pool(fit4.stage))
+fit.10.stage <- fit4.stage # stage 3 & 4 are significant
+
+# cor 0.2
+fit1 <-with(MM.mice.AUS.cor20.1[[3]],lm(log2CTLA4GAPDH ~ as.numeric(Stage) + Age + Sex + Breslow + Ulceration + Time2Draw + Site + log2IL37U6 + Death.Melanoma.Related + Survival.after.blood.draw + Radiation.AFTER.blood.draw + Melanoma.specific.10.year.mortality  + Other.NON.Skin.Cancer + Other.Primary.AFTER + Survival.time + Progression.prior))
+fit2 <-with(MM.mice.AUS.cor20.1[[3]],lm(log2CTLA4GAPDH ~ as.numeric(Stage) + Age + Sex + Breslow + Ulceration + Time2Draw + Site + Death.Melanoma.Related + Melanoma.specific.10.year.mortality + Radiation.AFTER.blood.draw + Progression.prior + Survival.time + Other.Primary.AFTER + Other.NON.Skin.Cancer))
+fit3 <-with(MM.mice.AUS.cor20.1[[3]],lm(log2CTLA4GAPDH ~ as.numeric(Stage) + Age + Sex + Breslow + Ulceration + Time2Draw + Site + Death.Melanoma.Related + Melanoma.specific.10.year.mortality + Progression.prior))
+fit4 <-with(MM.mice.AUS.cor20.1[[3]],lm(log2CTLA4GAPDH ~ as.numeric(Stage) + Age + Sex + Breslow + Ulceration + Time2Draw + Site))
+
+fit1.stage <-with(MM.mice.AUS.cor20.1.factor[[3]],lm(log2CTLA4GAPDH ~ Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site + log2IL37U6 + Death.Melanoma.Related + Survival.after.blood.draw + Radiation.AFTER.blood.draw + Melanoma.specific.10.year.mortality + Other.NON.Skin.Cancer + Other.Primary.AFTER + Survival.time + Progression.prior))
+fit2.stage <-with(MM.mice.AUS.cor20.1.factor[[3]],lm(log2CTLA4GAPDH ~ Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site + Death.Melanoma.Related + Melanoma.specific.10.year.mortality + Radiation.AFTER.blood.draw + Progression.prior + Survival.time + Other.Primary.AFTER + Other.NON.Skin.Cancer))
+fit3.stage <-with(MM.mice.AUS.cor20.1.factor[[3]],lm(log2CTLA4GAPDH ~ Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site + Death.Melanoma.Related + Melanoma.specific.10.year.mortality + Progression.prior))
+fit4.stage <-with(MM.mice.AUS.cor20.1.factor[[3]],lm(log2CTLA4GAPDH ~ Stage + Age + Sex + Breslow + Ulceration + Time2Draw + Site))
+```
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=F,eval=F}
+
+pool.compare(fit1,fit2)
+pool.compare(fit2,fit3)
+pool.compare(fit3,fit4)
+pool.compare(fit2,fit4)
+pool.compare(fit1,fit4)
+
+# Fit4 has best fit for corr 0.20
+summary(pool(fit4))
+fit.20 <- fit4
+
+pool.compare(fit1.stage,fit2.stage)
+pool.compare(fit2.stage,fit3.stage)
+pool.compare(fit3.stage,fit4.stage)
+pool.compare(fit2.stage,fit4.stage)
+pool.compare(fit1.stage,fit4.stage)
+# Fit4 has best fit for corr 0.2 stage
+summary(pool(fit4.stage))
+fit.20.stage <- fit4.stage # stage 3 & 4 are significant
+
+pool(fit.05) # flatter lambda
+pool(fit.10)
+pool(fit.20)
+
+pool.r.squared(fit.05) # 0.1111
+pool.r.squared(fit.10)
+pool.r.squared(fit.20) 
+# auxiliary corr at 0.05 and baseline variables are best fit for AUS stage continuous
+```
+
+### __Diagnostics of Imputation__
+
+### __Evaluate imputations over iterations for AUS__
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,eval=T}
+MM.mice.AUS.cor20.1[[1]]$imp$Breslow
+table(apply(sapply(MM.mice.AUS.cor20.1[[1]]$imp$Ulceration,function(x) as.numeric(x)-1),1,sum))/sum(table(apply(sapply(MM.mice.AUS.cor20.1[[1]]$imp$Ulceration,function(x) as.numeric(x)-1),1,sum)))
+
+stripplot(MM.mice.AUS.cor20.1[[1]])
+xyplot(MM.mice.AUS.cor20.1[[1]], Breslow ~ Stage | .imp, pch = 20, cex = 1.4)
+xyplot(MM.mice.AUS.cor20.1[[1]], Ulceration ~ Breslow | .imp, pch = 20, cex = 1.4)
+
+densityplot(MM.mice.AUS.cor20.1[[1]], scales = list(x = list(relation = "free")), layout = c(5, 1))
+
+MM.comp.AUS <- complete(MM.mice.AUS.cor20.1[[1]],iterations)
+
+marginplot(MM.AUS[,c(5,13)],xlab = "Stage", ylab = "Ulceration")
+marginplot(MM.AUS[,c(5,11)],xlab = "Stage", ylab = "Breslow depth")
+
+```
+
+### __Evaluate convergence for AUS__
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,eval=T}
+plot(MM.mice.AUS.cor20.1[[1]],c('Ulceration','Breslow'))
+```
+
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,include=F,eval=F}
+### __Model selection for AUS (Stage as factor)__
+# Stage as factor final model selection
+pool(fit.05.stage)
+pool(fit.10.stage)  # flatter lambda
+pool(fit.20.stage)
+
+pool.r.squared(fit.05.stage) # 0.1109
+pool.r.squared(fit.10.stage) # 0.1072 tighter CI
+pool.r.squared(fit.20.stage) # 0.1090
+# Auxiliary variables correlated at 0.10 with baseline covariates are best fit for AUS stage factor
+
+```
+
+### __Evaluate imputations over iterations for USA__
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,eval=T}
+MM.mice.USA.cor20.1[[1]]$imp$Breslow
+# tabulate number of values imputed as a '1' across rows
+table(apply(sapply(MM.mice.USA.cor20.1[[1]]$imp$Ulceration,function(x) as.numeric(x)-1),1,sum))/sum(table(apply(sapply(MM.mice.USA.cor20.1[[1]]$imp$Ulceration,function(x) as.numeric(x)-1),1,sum)))
+
+stripplot(MM.mice.USA.cor20.1[[1]])
+xyplot(MM.mice.USA.cor20.1[[1]], Breslow ~ Stage | .imp, pch = 20, cex = 1.4)
+xyplot(MM.mice.USA.cor20.1[[1]], Ulceration ~ Breslow | .imp, pch = 20, cex = 1.4)
+densityplot(MM.mice.USA.cor20.1[[1]], scales = list(x = list(relation = "free")), layout = c(5, 1))
+
+MM.comp.USA <- complete(MM.mice.USA.cor20.1[[1]],iterations)
+
+marginplot(MM.USA[,c(5,13)],xlab = "Stage", ylab = "Ulceration")
+marginplot(MM.USA[,c(5,11)],xlab = "Stage", ylab = "Breslow depth")
+
+```
+
+### __Evaluate convergence for USA__
+
+```{r comment=NA,echo=F,message=F,warning=FALSE,eval=T}
+plot(MM.mice.USA.cor20.1[[1]],c('Ulceration','Breslow'))
+```
+

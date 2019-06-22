@@ -1,0 +1,143 @@
+---
+title: "AdaSample Precision and Recall Check"
+author: "Michael W. Daniels"
+date: "6/16/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+setwd("~/Desktop/Projects/Katerina Kechris")
+load("saved_images/ada")
+```
+
+The below chunk displays the code to produce precision, recall, and f-measure from 100 iterations of 1-10% training sizes in 0.5% increments. In order to check the proper calculation, I will subset the test set done to 10 to 20 rows where precision and recall can easily be checked by hand. Also, random spot checks at each calculation will be recorded.
+
+For reference, precision measures the proportion of true positives among predicted positives TP/(TP+FP). Recall measures the proportion of true positives predicted TP/P. The f-measure is the geometric mean of the two performance markers.
+
+```{r eval=FALSE}
+i=3 # i represents the count in the percent training loop (e.g. for 1-10% and 0.5% increments, i=3 is 2%)
+j=1 # j represents the iteration count
+
+#ADASampling
+t_semi_ada_knn <- adaSample(Ps=rownames(X[which(y==1),]),Ns=rownames(X[which(y==0),]),
+                            train.mat=X_train,test.mat=X_test,classifier='knn')
+#t_semi_ada_logit <- adaSample(Ps=rownames(X[which(y==1),]),Ns=rownames(X[which(y==0),]),
+#                              train.mat=X_train,test.mat=X_test,classifier='logit')
+
+pred_cut_50 <- ifelse(t_semi_ada_knn[,1]<0.5,0,1)
+pred_cut_md <- ifelse(t_semi_ada_knn[,1]<median(t_semi_ada_knn[,1]),0,1) # 0.6
+pred_cut_80 <- ifelse(t_semi_ada_knn[,1]<0.80,0,1)
+pred_cut_95 <- ifelse(t_semi_ada_knn[,1]<0.95,0,1)
+
+confusion_50 <- cbind(predicted=pred_cut_50,truth=labels[-idx])
+confusion_md <- cbind(predicted=pred_cut_md,truth=labels[-idx])
+confusion_80 <- cbind(predicted=pred_cut_80,truth=labels[-idx])
+confusion_95 <- cbind(predicted=pred_cut_95,truth=labels[-idx])
+
+# precision measures proportion of true positives among predicted positives TP/(TP+FP)
+# idx predicted positives (predicted==1)
+# subset confusion matrix to just predicted positives
+# sum up the truth column to get the TP and divide by its length
+prec_ada_50[j,i] <- ifelse(length(which(confusion_50[,1]==1))>1,sum(confusion_50[which(confusion_50[,1]==1),][,2])/length(confusion_50[which(confusion_50[,1]==1),][,2]),NA)
+prec_ada_md[j,i] <- ifelse(length(which(confusion_md[,1]==1))>1,sum(confusion_md[which(confusion_md[,1]==1),][,2])/length(confusion_md[which(confusion_md[,1]==1),][,2]),NA)
+prec_ada_80[j,i] <- ifelse(length(which(confusion_80[,1]==1))>1,sum(confusion_80[which(confusion_80[,1]==1),][,2])/length(confusion_80[which(confusion_80[,1]==1),][,2]),NA)
+prec_ada_95[j,i] <- ifelse(length(which(confusion_95[,1]==1))>1,sum(confusion_95[which(confusion_95[,1]==1),][,2])/length(confusion_95[which(confusion_95[,1]==1),][,2]),NA)
+
+# recall measures proportion of true positives predicted TP/P
+# idx true positives (truth==1)
+# subset confusion matrix to just true positives
+# sum up the predicted column and divide by its length
+rec_ada_50[j,i] <- ifelse(length(which(confusion_50[,1]==1))>1&length(which(confusion_50[,2]==1))>1,sum(confusion_50[which(confusion_50[,1]==1),][,2])/length(confusion_50[which(confusion_50[,2]==1),][,2]),NA)
+rec_ada_md[j,i] <- ifelse(length(which(confusion_md[,1]==1))>1&length(which(confusion_md[,2]==1))>1,sum(confusion_md[which(confusion_md[,1]==1),][,2])/length(confusion_md[which(confusion_md[,2]==1),][,2]),NA)
+rec_ada_80[j,i] <- ifelse(length(which(confusion_80[,1]==1))>1&length(which(confusion_80[,2]==1))>1,sum(confusion_80[which(confusion_80[,1]==1),][,2])/length(confusion_80[which(confusion_80[,2]==1),][,2]),NA)
+rec_ada_95[j,i] <- ifelse(length(which(confusion_95[,1]==1))>1&length(which(confusion_95[,2]==1))>1,sum(confusion_95[which(confusion_95[,1]==1),][,2])/length(confusion_95[which(confusion_95[,2]==1),][,2]),NA)
+ 
+# f-measure is a geometric mean of precision and recall
+
+ada_prec_50 <- replace(prec_ada_50,prec_ada_50==0,NA)
+ada_prec_md <- replace(prec_ada_md,prec_ada_md==0,NA)
+ada_prec_80 <- replace(prec_ada_80,prec_ada_80==0,NA)
+ada_prec_95 <- replace(prec_ada_95,prec_ada_95==0,NA)
+
+ada_rec_50 <- replace(rec_ada_50,rec_ada_50==0,NA)
+ada_rec_md <- replace(rec_ada_md,rec_ada_md==0,NA)
+ada_rec_80 <- replace(rec_ada_80,rec_ada_80==0,NA)
+ada_rec_95 <- replace(rec_ada_95,rec_ada_95==0,NA)
+
+prec_50_avg <- apply(ada_prec_50,2,function(x) mean(x,na.rm=T))
+prec_md_avg <- apply(ada_prec_md,2,function(x) mean(x,na.rm=T))
+prec_80_avg <- apply(ada_prec_80,2,function(x) mean(x,na.rm=T))
+prec_95_avg <- apply(ada_prec_95,2,function(x) mean(x,na.rm=T))
+
+rec_50_avg <- apply(ada_rec_50,2,function(x) mean(x,na.rm=T))
+rec_md_avg <- apply(ada_rec_md,2,function(x) mean(x,na.rm=T))
+rec_80_avg <- apply(ada_rec_80,2,function(x) mean(x,na.rm=T))
+rec_95_avg <- apply(ada_rec_95,2,function(x) mean(x,na.rm=T))
+
+f_50 <- 2/((1/prec_50_avg)+(1/rec_50_avg))
+f_md <- 2/((1/prec_md_avg)+(1/rec_md_avg))
+f_80 <- 2/((1/prec_80_avg)+(1/rec_80_avg))
+f_95 <- 2/((1/prec_95_avg)+(1/rec_95_avg))
+
+prec_ada <- rbind(prec_50_avg,prec_md_avg,prec_80_avg,prec_95_avg)
+rec_ada <- rbind(rec_50_avg,rec_md_avg,rec_80_avg,rec_95_avg)
+f_ada <- rbind(f_50,f_md,f_80,f_95)
+colnames(prec_ada) <- colnames(rec_ada) <- colnames(f_ada) <- p*100
+prec_ada
+rec_ada
+f_ada
+
+```
+
+First, what are the predicted probabilities from AdaSample?
+
+```{r}
+head(t_semi_ada_knn,20)
+```
+
+We will use the first column as the probability for positivity. Let's place the predicted class from each cutoff juxtaposed with the AdaSample predicted probability.
+
+```{r}
+mat <- cbind(t_semi_ada_knn[,1],pred_cut_50,pred_cut_md,pred_cut_80,pred_cut_95)
+head(mat,20)
+
+```
+
+Now, let's juxtapose class prediction with class truth focusing now just on the 0.5 cutoff. I extended the subset to 30 in order to include a false negative.
+
+```{r}
+head(confusion_50,30)
+```
+
+There 4/30 (0.13333) true essential yeast genes.
+There 15/30 (0.5) predicted essential yeast genes.
+TP=3
+FP=14
+TN=12
+FN=1
+
+Using the same formula in the main code for precision, recall, and f-measure but subsetted for the first 30 rows, we can spot check the performance measures for accuracy. An ifelse statement is utilized to prevent dividing by zero and dimensional referencing of matrices as well.
+
+### Precision
+TP/(TP+FP)
+3/(3+14)=0.1764706
+
+```{r}
+ifelse(length(which(confusion_50[1:30,1]==1))>1&length(which(confusion_50[,1]==1))>1,sum(confusion_50[1:30,][which(confusion_50[1:30,1]==1),][,2])/length(confusion_50[1:30,][which(confusion_50[1:30,1]==1),][,2]),NA)
+```
+
+### Recall
+TP/P or TP/(TP+FN)
+3/(3+1)=0.75
+
+```{r}
+ifelse(length(which(confusion_50[1:30,1]==1))>1&length(which(confusion_50[1:30,2]==1))>1,sum(confusion_50[1:30,][which(confusion_50[1:30,1]==1),][,2])/length(confusion_50[1:30,][which(confusion_50[1:30,2]==1),][,2]),NA)
+```
+
+### f-measure
+2/((1/precision)+(1/recall))
+2/((1/0.1764706)+(1/0.75))=0.2857143
+
+The f-measure was estimated by averaging the 100 iteration for precision and recall first. Then, one f-measure was calculated for each percent training size.
+

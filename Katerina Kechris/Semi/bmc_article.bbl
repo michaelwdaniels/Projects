@@ -1,0 +1,1293 @@
+%% BioMed_Central_Bib_Style_v1.01
+
+\begin{thebibliography}{41}
+% BibTex style file: bmc-mathphys.bst (version 2.1), 2014-07-24
+\ifx \bisbn   \undefined \def \bisbn  #1{ISBN #1}\fi
+\ifx \binits  \undefined \def \binits#1{#1}\fi
+\ifx \bauthor  \undefined \def \bauthor#1{#1}\fi
+\ifx \batitle  \undefined \def \batitle#1{#1}\fi
+\ifx \bjtitle  \undefined \def \bjtitle#1{#1}\fi
+\ifx \bvolume  \undefined \def \bvolume#1{\textbf{#1}}\fi
+\ifx \byear  \undefined \def \byear#1{#1}\fi
+\ifx \bissue  \undefined \def \bissue#1{#1}\fi
+\ifx \bfpage  \undefined \def \bfpage#1{#1}\fi
+\ifx \blpage  \undefined \def \blpage #1{#1}\fi
+\ifx \burl  \undefined \def \burl#1{\textsf{#1}}\fi
+\ifx \doiurl  \undefined \def \doiurl#1{\textsf{#1}}\fi
+\ifx \betal  \undefined \def \betal{\textit{et al.}}\fi
+\ifx \binstitute  \undefined \def \binstitute#1{#1}\fi
+\ifx \binstitutionaled  \undefined \def \binstitutionaled#1{#1}\fi
+\ifx \bctitle  \undefined \def \bctitle#1{#1}\fi
+\ifx \beditor  \undefined \def \beditor#1{#1}\fi
+\ifx \bpublisher  \undefined \def \bpublisher#1{#1}\fi
+\ifx \bbtitle  \undefined \def \bbtitle#1{#1}\fi
+\ifx \bedition  \undefined \def \bedition#1{#1}\fi
+\ifx \bseriesno  \undefined \def \bseriesno#1{#1}\fi
+\ifx \blocation  \undefined \def \blocation#1{#1}\fi
+\ifx \bsertitle  \undefined \def \bsertitle#1{#1}\fi
+\ifx \bsnm \undefined \def \bsnm#1{#1}\fi
+\ifx \bsuffix \undefined \def \bsuffix#1{#1}\fi
+\ifx \bparticle \undefined \def \bparticle#1{#1}\fi
+\ifx \barticle \undefined \def \barticle#1{#1}\fi
+\ifx \bconfdate \undefined \def \bconfdate #1{#1}\fi
+\ifx \botherref \undefined \def \botherref #1{#1}\fi
+\ifx \url \undefined \def \url#1{\textsf{#1}}\fi
+\ifx \bchapter \undefined \def \bchapter#1{#1}\fi
+\ifx \bbook \undefined \def \bbook#1{#1}\fi
+\ifx \bcomment \undefined \def \bcomment#1{#1}\fi
+\ifx \oauthor \undefined \def \oauthor#1{#1}\fi
+\ifx \citeauthoryear \undefined \def \citeauthoryear#1{#1}\fi
+\ifx \endbibitem  \undefined \def \endbibitem {}\fi
+\ifx \bconflocation  \undefined \def \bconflocation#1{#1}\fi
+\ifx \arxivurl  \undefined \def \arxivurl#1{\textsf{#1}}\fi
+\csname PreBibitemsHook\endcsname
+
+%%% 1
+\bibitem{ENCODE2004a}
+\begin{barticle}
+\bauthor{\bsnm{{The ENCODE Project Consortium}}}:
+\batitle{The {ENCODE (ENCyclopedia Of DNA Elements)} project}.
+\bjtitle{Science}
+\bvolume{306}(\bissue{5696}),
+\bfpage{636}--\blpage{640}
+(\byear{2004}).
+doi:\doiurl{10.1126/science.1105136}
+\end{barticle}
+\endbibitem
+
+%%% 2
+\bibitem{ENCODE2012a}
+\begin{barticle}
+\bauthor{\bsnm{{The ENCODE Project Consortium}}}:
+\batitle{An integrated encyclopedia of {DNA} elements in the human genome}.
+\bjtitle{Nature}
+\bvolume{489}(\bissue{7414}),
+\bfpage{57}--\blpage{74}
+(\byear{2012}).
+doi:\doiurl{10.1038/nature11247}
+\end{barticle}
+\endbibitem
+
+%%% 3
+\bibitem{Celniker2009a}
+\begin{barticle}
+\bauthor{\bsnm{Celniker}, \binits{S.E.}},
+\bauthor{\bsnm{Dillon}, \binits{L.A.}},
+\bauthor{\bsnm{Gerstein}, \binits{M.B.}},
+\bauthor{\bsnm{Gunsalus}, \binits{K.C.}},
+\bauthor{\bsnm{Henikoff}, \binits{S.}}, \betal:
+\batitle{Unlocking the secrets of the genome}.
+\bjtitle{Nature}
+\bvolume{459}(\bissue{7249}),
+\bfpage{927}--\blpage{930}
+(\byear{2009}).
+doi:\doiurl{10.1038/459927a}
+\end{barticle}
+\endbibitem
+
+%%% 4
+\bibitem{TCGAsite}
+\begin{botherref}
+\oauthor{\bsnm{{National Cancer Institute}}}:
+{T}he {C}ancer {G}enome {A}tlas.
+Retrieved May 26, 2013, from http://cancergenome.nih.gov/
+(2013)
+\end{botherref}
+\endbibitem
+
+%%% 5
+\bibitem{Hamid2009a}
+\begin{botherref}
+\oauthor{\bsnm{Hamid}, \binits{J.S.}},
+\oauthor{\bsnm{Hu}, \binits{P.}},
+\oauthor{\bsnm{Roslin}, \binits{N.M.}},
+\oauthor{\bsnm{Ling}, \binits{V.}},
+\oauthor{\bsnm{Greenwood}, \binits{C.M.T.}},
+\oauthor{\bsnm{Beyene}, \binits{J.}}:
+Data integration in genetics and genomics: Methods and challenges.
+Human Genomics and Proteomics
+\textbf{1}(1)
+(2009).
+doi:\doiurl{10.4061/2009/869093}
+\end{botherref}
+\endbibitem
+
+%%% 6
+\bibitem{Hawkins2010a}
+\begin{barticle}
+\bauthor{\bsnm{Hawkins}, \binits{R.D.}},
+\bauthor{\bsnm{Hon}, \binits{G.C.}},
+\bauthor{\bsnm{Ren}, \binits{B.}}:
+\batitle{Next-generation genomics: an integrative approach}.
+\bjtitle{Nature Reviews Genetics}
+\bvolume{11}(\bissue{7}),
+\bfpage{476}--\blpage{486}
+(\byear{2010}).
+doi:\doiurl{10.1038/nrg2795}
+\end{barticle}
+\endbibitem
+
+%%% 7
+\bibitem{Lemmens2006a}
+\begin{barticle}
+\bauthor{\bsnm{Lemmens}, \binits{K.}},
+\bauthor{\bsnm{Dhollander}, \binits{T.}},
+\bauthor{\bsnm{{De Bie}}, \binits{T.}},
+\bauthor{\bsnm{Monsieurs}, \binits{P.}},
+\bauthor{\bsnm{Engelen}, \binits{K.}}, \betal:
+\batitle{Inferring transcriptional modules from {ChIP-chip}, motif and
+  microarray data}.
+\bjtitle{Genome Biology}
+\bvolume{7}(\bissue{5}),
+\bfpage{37}
+(\byear{2006})
+\end{barticle}
+\endbibitem
+
+%%% 8
+\bibitem{Tyekucheva2011a}
+\begin{barticle}
+\bauthor{\bsnm{Tyeku\-cheva}, \binits{S.}},
+\bauthor{\bsnm{Marchionni}, \binits{L.}},
+\bauthor{\bsnm{Karchin}, \binits{R.}},
+\bauthor{\bsnm{Parmigiani}, \binits{G.}}:
+\batitle{Integrating diverse genomic data using gene sets}.
+\bjtitle{Genome Biology}
+\bvolume{12}(\bissue{10}),
+\bfpage{105}
+(\byear{2011}).
+doi:\doiurl{10.1186/gb-2011-12-10-r105}
+\end{barticle}
+\endbibitem
+
+%%% 9
+\bibitem{Xie2010a}
+\begin{barticle}
+\bauthor{\bsnm{Xie}, \binits{Y.}},
+\bauthor{\bsnm{Pan}, \binits{W.}},
+\bauthor{\bsnm{Jeong}, \binits{K.S.}},
+\bauthor{\bsnm{Xiao}, \binits{G.}},
+\bauthor{\bsnm{Khodursky}, \binits{A.B.}}:
+\batitle{A {B}ayesian approach to joint modeling of protein-{DNA} binding, gene
+  expression and sequence data}.
+\bjtitle{Statistics in Medicine}
+\bvolume{29}(\bissue{4}),
+\bfpage{489}--\blpage{503}
+(\byear{2010}).
+doi:\doiurl{10.1002/sim.3815}
+\end{barticle}
+\endbibitem
+
+%%% 10
+\bibitem{Qin2011a}
+\begin{barticle}
+\bauthor{\bsnm{Qin}, \binits{J.}},
+\bauthor{\bsnm{Li}, \binits{M.J.}},
+\bauthor{\bsnm{Wang}, \binits{P.}},
+\bauthor{\bsnm{Zhang}, \binits{M.Q.}},
+\bauthor{\bsnm{Wang}, \binits{J.}}:
+\batitle{{ChIP-Array}: combinatory analysis of {ChIP}-seq/chip and microarray
+  gene expression data to discover direct/indirect targets of a transcription
+  factor}.
+\bjtitle{Nucleic Acids Research}
+\bvolume{39}(\bissue{suppl 2}),
+\bfpage{430}--\blpage{436}
+(\byear{2011}).
+doi:\doiurl{10.1093/nar/gkr332}
+\end{barticle}
+\endbibitem
+
+%%% 11
+\bibitem{Hoffman2012a}
+\begin{barticle}
+\bauthor{\bsnm{Hoffman}, \binits{M.H.}},
+\bauthor{\bsnm{Buske}, \binits{O.J.}},
+\bauthor{\bsnm{Wang}, \binits{J.}},
+\bauthor{\bsnm{Weng}, \binits{Z.}},
+\bauthor{\bsnm{Bilmes}, \binits{J.A.}},
+\bauthor{\bsnm{Noble}, \binits{W.S.}}:
+\batitle{Unsupervised pattern discovery in human chromatin structure through
+  genomic segmentation}.
+\bjtitle{Nature Methods}
+\bvolume{9},
+\bfpage{473}--\blpage{476}
+(\byear{2012}).
+doi:\doiurl{10.1038/nmeth.1937}
+\end{barticle}
+\endbibitem
+
+%%% 12
+\bibitem{Dvorkin2013a}
+\begin{barticle}
+\bauthor{\bsnm{Dvorkin}, \binits{D.}},
+\bauthor{\bsnm{Biehs}, \binits{B.}},
+\bauthor{\bsnm{Kechris}, \binits{K.}}:
+\batitle{A graphical model method for integrating multiple sources of
+  genome-scale data}.
+\bjtitle{Statistical Applications in Genetics and Molecular Biology}
+\bvolume{12}(\bissue{4}),
+\bfpage{469}--\blpage{487}
+(\byear{2013})
+\end{barticle}
+\endbibitem
+
+%%% 13
+\bibitem{Zhang2015a}
+\begin{barticle}
+\bauthor{\bsnm{Zhang}, \binits{Z.}},
+\bauthor{\bsnm{Ren}, \binits{Q.}}:
+\batitle{Why are essential genes essential? - the essentiality of saccharomyces
+  genes}.
+\bjtitle{Microbial Cell}
+\bvolume{2}(\bissue{8}),
+\bfpage{280}--\blpage{287}
+(\byear{2015}).
+doi:\doiurl{10.15698/mic2015.08.218}
+\end{barticle}
+\endbibitem
+
+%%% 14
+\bibitem{Juhas2011a}
+\begin{barticle}
+\bauthor{\bsnm{Juhas}, \binits{M.}},
+\bauthor{\bsnm{Eberl}, \binits{L.}},
+\bauthor{\bsnm{Glass}, \binits{J.I.}}:
+\batitle{Essence of life: essential genes of minimal genomes}.
+\bjtitle{Trends in Cell Biology}
+\bvolume{21}(\bissue{10}),
+\bfpage{562}--\blpage{568}
+(\byear{2011}).
+doi:\doiurl{10.1016/j.tcb.2011.07.005}
+\end{barticle}
+\endbibitem
+
+%%% 15
+\bibitem{Lou2014a}
+\begin{barticle}
+\bauthor{\bsnm{Luo}, \binits{H.}},
+\bauthor{\bsnm{Lin}, \binits{Y.}},
+\bauthor{\bsnm{Gao}, \binits{F.}},
+\bauthor{\bsnm{Zhang}, \binits{C.T.}},
+\bauthor{\bsnm{Zhang}, \binits{R.}}:
+\batitle{Deg 10, an update of the database of essential genes that includes
+  both protein-coding genes and noncoding genomic elements}.
+\bjtitle{Nucleic Acids Research}
+\bvolume{42},
+\bfpage{574}--\blpage{580}
+(\byear{2014}).
+doi:\doiurl{10.1093/nar/gkt1131}
+\end{barticle}
+\endbibitem
+
+%%% 16
+\bibitem{Chen2012}
+\begin{barticle}
+\bauthor{\bsnm{WH}, \binits{C.}},
+\bauthor{\bsnm{P}, \binits{M.}},
+\bauthor{\bsnm{MJ}, \binits{L.}},
+\bauthor{\bsnm{P.}, \binits{B.}}:
+\batitle{Ogee: an online gene essentiality database}.
+\bjtitle{Nucleic Acids Research}
+\bvolume{40},
+\bfpage{901}--\blpage{906}
+(\byear{2012}).
+doi:\doiurl{10.1093/nar/gkr986}
+\end{barticle}
+\endbibitem
+
+%%% 17
+\bibitem{Wang2015a}
+\begin{barticle}
+\bauthor{\bsnm{Wang}, \binits{T.}},
+\bauthor{\bsnm{Birsoy}, \binits{K.}},
+\bauthor{\bsnm{Hughes}, \binits{N.W.}},
+\bauthor{\bsnm{Krupczak}, \binits{K.M.}},
+\bauthor{\bsnm{Post}, \binits{Y.}},
+\bauthor{\bsnm{Wei}, \binits{J.J.}},
+\bauthor{\bsnm{Sabatini}, \binits{D.M.}}, \betal:
+\batitle{Identification and characterization of essential genes in the human
+  genome}.
+\bjtitle{Science}
+\bvolume{350}(\bissue{6264}),
+\bfpage{1096}--\blpage{1101}
+(\byear{2015}).
+doi:\doiurl{10.1126/science.aac7041}
+\end{barticle}
+\endbibitem
+
+%%% 18
+\bibitem{Mobegi2017}
+\begin{barticle}
+\bauthor{\bsnm{Mobegi}, \binits{F.M.}},
+\bauthor{\bsnm{Zomer}, \binits{A.}},
+\bauthor{\bparticle{de} \bsnm{Jonge}, \binits{M.I.}},
+\bauthor{\bparticle{van} \bsnm{Hijum}, \binits{S.A.F.T.}}:
+\batitle{Advances and perspectives in computational prediction of microbial
+  gene essentiality}.
+\bjtitle{Briefings in Functional Genomics}
+\bvolume{16}(\bissue{2}),
+\bfpage{70}--\blpage{79}
+(\byear{2017}).
+doi:\doiurl{10.1093/bfgp/elv063}
+\end{barticle}
+\endbibitem
+
+%%% 19
+\bibitem{Zhang2016a}
+\begin{botherref}
+\oauthor{\bsnm{X}, \binits{Z.}},
+\oauthor{\bsnm{ML}, \binits{A.}},
+\oauthor{\bsnm{N}, \binits{L.}}:
+Predicting essential genes and proteins based on machine learning and network
+  topological features: A comprehensive review.
+Frontiers in Physiology
+\textbf{7}(75)
+(2016).
+doi:\doiurl{10.3389/fphys.2016.00075}
+\end{botherref}
+\endbibitem
+
+%%% 20
+\bibitem{Alexandridis2004a}
+\begin{barticle}
+\bauthor{\bsnm{Alexandridis}, \binits{R.}},
+\bauthor{\bsnm{Lin}, \binits{S.}},
+\bauthor{\bsnm{Irwin}, \binits{M.}}:
+\batitle{Class discovery and classification of tumor samples using mixture
+  modeling of gene expression data---a unified approach}.
+\bjtitle{Bioinformatics}
+\bvolume{20}(\bissue{16}),
+\bfpage{2545}--\blpage{2552}
+(\byear{2004}).
+doi:\doiurl{10.1093/bioinformatics/bth281}
+\end{barticle}
+\endbibitem
+
+%%% 21
+\bibitem{Elkan2008a}
+\begin{bchapter}
+\bauthor{\bsnm{Elkan}, \binits{C.}},
+\bauthor{\bsnm{Noto}, \binits{K.}}:
+\bctitle{Learning classifiers from only positive and unlabeled data}.
+In: \bbtitle{Proceedings of the 14th International Conference on Knowledge
+  Discovery and Data Mining},
+pp. \bfpage{213}--\blpage{220}
+(\byear{2008})
+\end{bchapter}
+\endbibitem
+
+%%% 22
+\bibitem{He2010a}
+\begin{bchapter}
+\bauthor{\bsnm{He}, \binits{J.}},
+\bauthor{\bsnm{Zhang}, \binits{Y.}},
+\bauthor{\bsnm{Li}, \binits{X.}},
+\bauthor{\bsnm{Wang}, \binits{Y.}}:
+\bctitle{Naive {B}ayes classifier for positive unlabeled learning with
+  uncertainty}.
+In: \bbtitle{Proceedings of the Tenth SIAM International Conference on Data
+  Mining},
+pp. \bfpage{361}--\blpage{372}
+(\byear{2010})
+\end{bchapter}
+\endbibitem
+
+%%% 23
+\bibitem{Vermunt2005a}
+\begin{bchapter}
+\bauthor{\bsnm{Vermunt}, \binits{J.K.}},
+\bauthor{\bsnm{Magidson}, \binits{J.}}:
+\bctitle{Hierarchical mixture models for nested data structures}.
+In: \bbtitle{Classification--the Ubiquitous Challenge: Proceedings of the 28th
+  Annual Conference of the Gesellschaft F{\"u}r Klassifikation eV, University
+  of Dortmund, March 9-11, 2004},
+vol. \bseriesno{28},
+p. \bfpage{240}
+(\byear{2005}).
+\bcomment{Springer}
+\end{bchapter}
+\endbibitem
+
+%%% 24
+\bibitem{Jornsten2008a}
+\begin{barticle}
+\bauthor{\bsnm{J\"{o}rnsten}, \binits{R.}},
+\bauthor{\bsnm{Kele\c{s}}, \binits{S.}}:
+\batitle{Mixture models with multiple levels, with application to the analysis
+  of multifactor gene expression data}.
+\bjtitle{Biostatistics}
+\bvolume{9}(\bissue{3}),
+\bfpage{540}--\blpage{554}
+(\byear{2008}).
+doi:\doiurl{10.1093/biostatistics/kxm051}
+\end{barticle}
+\endbibitem
+
+%%% 25
+\bibitem{Li2010a}
+\begin{barticle}
+\bauthor{\bsnm{Li}, \binits{Q.}},
+\bauthor{\bsnm{MacCoss}, \binits{M.J.}},
+\bauthor{\bsnm{Stephens}, \binits{M.}}:
+\batitle{A nested mixture model for protein identification using mass
+  spectrometry}.
+\bjtitle{The Annals of Applied Statistics}
+\bvolume{4}(\bissue{2}),
+\bfpage{962}--\blpage{987}
+(\byear{2010}).
+doi:\doiurl{10.1214/09-AOAS316}
+\end{barticle}
+\endbibitem
+
+%%% 26
+\bibitem{Dempster1977a}
+\begin{barticle}
+\bauthor{\bsnm{Dempster}, \binits{A.P.}},
+\bauthor{\bsnm{Laird}, \binits{N.M.}},
+\bauthor{\bsnm{Rubin}, \binits{D.B.}}:
+\batitle{Maximum likelihood from incomplete data via the {EM} algorithm}.
+\bjtitle{Journal of the Royal Statistical Society Series B}
+\bvolume{39}(\bissue{1}),
+\bfpage{1}--\blpage{38}
+(\byear{1977})
+\end{barticle}
+\endbibitem
+
+%%% 27
+\bibitem{McLachlan2008a}
+\begin{bbook}
+\bauthor{\bsnm{McLachlan}, \binits{G.J.}},
+\bauthor{\bsnm{Krishnan}, \binits{T.}}:
+\bbtitle{The {EM} Algorithm and Extensions},
+\bedition{2}nd edn.
+\bpublisher{Wiley},
+\blocation{Hoboken, New Jersey}
+(\byear{2008})
+\end{bbook}
+\endbibitem
+
+%%% 28
+\bibitem{Dvorkin2013b}
+\begin{botherref}
+\oauthor{\bsnm{Dvorkin}, \binits{D.}}:
+Graphical model methods for integrating diverse sources of genome-scale data.
+PhD thesis,
+University of Colorado
+(2013)
+\end{botherref}
+\endbibitem
+
+%%% 29
+\bibitem{Biernacki2000a}
+\begin{barticle}
+\bauthor{\bsnm{Biernacki}, \binits{C.}},
+\bauthor{\bsnm{Celeux}, \binits{G.}},
+\bauthor{\bsnm{Govaert}, \binits{G.}}:
+\batitle{Assessing a mixture model for clustering with the integrated completed
+  likelihood}.
+\bjtitle{IEEE Transactions on Pattern Analysis and Machine Intelligence}
+\bvolume{22}(\bissue{7}),
+\bfpage{719}--\blpage{725}
+(\byear{2000}).
+doi:\doiurl{10.1109/34.865189}
+\end{barticle}
+\endbibitem
+
+%%% 30
+\bibitem{Seringhaus2006a}
+\begin{barticle}
+\bauthor{\bsnm{Seringhaus}, \binits{M.}},
+\bauthor{\bsnm{Paccanaro}, \binits{A.}},
+\bauthor{\bsnm{Borneman}, \binits{A.}},
+\bauthor{\bsnm{Snyder}, \binits{M.}},
+\bauthor{\bsnm{Gerstein}, \binits{M.}}:
+\batitle{Predicting essential genes in fungal genomes}.
+\bjtitle{Genome Research}
+\bvolume{16}(\bissue{9}),
+\bfpage{1126}--\blpage{1135}
+(\byear{2006}).
+doi:\doiurl{10.1101/gr.5144106}
+\end{barticle}
+\endbibitem
+
+%%% 31
+\bibitem{Ensembl2018}
+\begin{barticle}
+\bauthor{\bsnm{Zerbino}, \binits{D.}}, \betal:
+\batitle{Ensembl}.
+\bjtitle{Nucleic Acids Research}
+\bvolume{46}(\bissue{D1}),
+\bfpage{754}--\blpage{761}
+(\byear{2018}).
+doi:\doiurl{10.1093/nar/gkx1098}
+\end{barticle}
+\endbibitem
+
+%%% 32
+\bibitem{Friedman}
+\begin{botherref}
+\oauthor{\bsnm{Jerome~Friedman}, \binits{R.T.} \bsuffix{Trevor~Hastie}}:
+Regularization Paths for Generalized Linear Models Via Coordinate Descent.
+(2010).
+\url{http://www.jstatsoft.org/v33/i01/}
+\end{botherref}
+\endbibitem
+
+%%% 33
+\bibitem{Meyer}
+\begin{botherref}
+\oauthor{\bsnm{Meyer}, \binits{D.}},
+\oauthor{\bsnm{Dimitriadou}, \binits{E.}},
+\oauthor{\bsnm{Hornik}, \binits{K.}},
+\oauthor{\bsnm{Weingessel}, \binits{A.}},
+\oauthor{\bsnm{Leisch}, \binits{F.}}:
+E1071: Misc Functions of the Department of Statistics, Probability Theory Group
+  (Formerly: E1071), TU Wien.
+(2017).
+R package version 1.6-8.
+\url{https://CRAN.R-project.org/package=e1071}
+\end{botherref}
+\endbibitem
+
+%%% 34
+\bibitem{Liaw}
+\begin{barticle}
+\bauthor{\bsnm{Liaw}, \binits{A.}},
+\bauthor{\bsnm{Wiener}, \binits{M.}}:
+\batitle{Classification and regression by randomforest}.
+\bjtitle{R News}
+\bvolume{2}(\bissue{3}),
+\bfpage{18}--\blpage{22}
+(\byear{2002})
+\end{barticle}
+\endbibitem
+
+%%% 35
+\bibitem{Biehs2010a}
+\begin{barticle}
+\bauthor{\bsnm{Biehs}, \binits{B.}},
+\bauthor{\bsnm{Kechris}, \binits{K.}},
+\bauthor{\bsnm{Liu}, \binits{S.M.}},
+\bauthor{\bsnm{Kornberg}, \binits{T.B.}}:
+\batitle{Hedgehog targets in the {D}rosophila embryo and the mechanisms that
+  generate tissue-specific outputs of {H}edgehog signaling}.
+\bjtitle{Development}
+\bvolume{137}(\bissue{22}),
+\bfpage{3887}--\blpage{3898}
+(\byear{2010}).
+doi:\doiurl{10.1242/dev.055871}
+\end{barticle}
+\endbibitem
+
+%%% 36
+\bibitem{GersteinLab}
+\begin{botherref}
+\oauthor{\bsnm{M.B}, \binits{G.}}
+\url{http://www.gersteinlab.org/proj/predess/}
+\end{botherref}
+\endbibitem
+
+%%% 37
+\bibitem{Jansen2002}
+\begin{barticle}
+\bauthor{\bsnm{R}, \binits{J.}},
+\bauthor{\bsnm{D}, \binits{G.}},
+\bauthor{\bsnm{M}, \binits{G.}}:
+\batitle{Relating whole-genome expression data with protein-protein
+  interactions}.
+\bjtitle{Genome Research}
+\bvolume{12}(\bissue{1}),
+\bfpage{37}--\blpage{46}
+(\byear{2002})
+\end{barticle}
+\endbibitem
+
+%%% 38
+\bibitem{Schwarz1978a}
+\begin{barticle}
+\bauthor{\bsnm{Schwarz}, \binits{G.}}:
+\batitle{Estimating the dimension of a model}.
+\bjtitle{The Annals of Statistics}
+\bvolume{6}(\bissue{2}),
+\bfpage{461}--\blpage{464}
+(\byear{1978})
+\end{barticle}
+\endbibitem
+
+%%% 39
+\bibitem{Ji2005a}
+\begin{barticle}
+\bauthor{\bsnm{Ji}, \binits{Y.}},
+\bauthor{\bsnm{Wu}, \binits{C.}},
+\bauthor{\bsnm{Liu}, \binits{P.}},
+\bauthor{\bsnm{Wang}, \binits{J.}},
+\bauthor{\bsnm{Coombes}, \binits{K.R.}}:
+\batitle{Applications of beta-mixture models in bioinformatics}.
+\bjtitle{Bioinformatics}
+\bvolume{21}(\bissue{9}),
+\bfpage{2118}--\blpage{2122}
+(\byear{2005}).
+doi:\doiurl{10.1093/bioinformatics/bti318}
+\end{barticle}
+\endbibitem
+
+%%% 40
+\bibitem{Viroli2010a}
+\begin{barticle}
+\bauthor{\bsnm{Viroli}, \binits{C.}}:
+\batitle{Dimensionally reduced model-based clustering through mixtures of
+  factor mixture analyzers}.
+\bjtitle{Journal of Classification}
+\bvolume{27},
+\bfpage{363}--\blpage{388}
+(\byear{2010})
+\end{barticle}
+\endbibitem
+
+%%% 41
+\bibitem{Shao1993a}
+\begin{barticle}
+\bauthor{\bsnm{Shao}, \binits{J.}}:
+\batitle{Linear model selection by cross-validation}.
+\bjtitle{Journal of the American Statistical Association}
+\bvolume{88}(\bissue{422}),
+\bfpage{486}--\blpage{494}
+(\byear{1993})
+\end{barticle}
+\endbibitem
+
+\end{thebibliography}
+
+\newcommand{\BMCxmlcomment}[1]{}
+
+\BMCxmlcomment{
+
+<refgrp>
+
+<bibl id="B1">
+  <title><p>The {ENCODE (ENCyclopedia Of DNA Elements)} Project</p></title>
+  <aug>
+    <au><cnm>{The ENCODE Project Consortium}</cnm></au>
+  </aug>
+  <source>Science</source>
+  <pubdate>2004</pubdate>
+  <volume>306</volume>
+  <issue>5696</issue>
+  <fpage>636</fpage>
+  <lpage>640</lpage>
+</bibl>
+
+<bibl id="B2">
+  <title><p>An integrated encyclopedia of {DNA} elements in the human
+  genome</p></title>
+  <aug>
+    <au><cnm>{The ENCODE Project Consortium}</cnm></au>
+  </aug>
+  <source>Nature</source>
+  <pubdate>2012</pubdate>
+  <volume>489</volume>
+  <issue>7414</issue>
+  <fpage>57</fpage>
+  <lpage>74</lpage>
+  <url>http://www.nature.com/nature/journal/v489/n7414/abs/nature11247.html</url>
+</bibl>
+
+<bibl id="B3">
+  <title><p>Unlocking the secrets of the genome</p></title>
+  <aug>
+    <au><snm>Celniker</snm><fnm>S.E.</fnm></au>
+    <au><snm>Dillon</snm><fnm>L.A.</fnm></au>
+    <au><snm>Gerstein</snm><fnm>M.B.</fnm></au>
+    <au><snm>Gunsalus</snm><fnm>K.C.</fnm></au>
+    <au><snm>Henikoff</snm><fnm>S.</fnm></au>
+    <au><cnm>others</cnm></au>
+  </aug>
+  <source>Nature</source>
+  <pubdate>2009</pubdate>
+  <volume>459</volume>
+  <issue>7249</issue>
+  <fpage>927</fpage>
+  <lpage>930</lpage>
+</bibl>
+
+<bibl id="B4">
+  <title><p>{T}he {C}ancer {G}enome {A}tlas</p></title>
+  <aug>
+    <au><cnm>{National Cancer Institute}</cnm></au>
+  </aug>
+  <pubdate>2013</pubdate>
+  <note>Retrieved May 26, 2013, from http://cancergenome.nih.gov/</note>
+</bibl>
+
+<bibl id="B5">
+  <title><p>Data Integration in Genetics and Genomics: Methods and
+  Challenges</p></title>
+  <aug>
+    <au><snm>Hamid</snm><fnm>J.S.</fnm></au>
+    <au><snm>Hu</snm><fnm>P.</fnm></au>
+    <au><snm>Roslin</snm><fnm>N.M.</fnm></au>
+    <au><snm>Ling</snm><fnm>V.</fnm></au>
+    <au><snm>Greenwood</snm><fnm>C.M.T.</fnm></au>
+    <au><snm>Beyene</snm><fnm>J.</fnm></au>
+  </aug>
+  <source>Human Genomics and Proteomics</source>
+  <pubdate>2009</pubdate>
+  <volume>1</volume>
+  <issue>1</issue>
+</bibl>
+
+<bibl id="B6">
+  <title><p>Next-generation genomics: an integrative approach</p></title>
+  <aug>
+    <au><snm>Hawkins</snm><fnm>R.D.</fnm></au>
+    <au><snm>Hon</snm><fnm>G.C.</fnm></au>
+    <au><snm>Ren</snm><fnm>B.</fnm></au>
+  </aug>
+  <source>Nature Reviews Genetics</source>
+  <pubdate>2010</pubdate>
+  <volume>11</volume>
+  <issue>7</issue>
+  <fpage>476</fpage>
+  <lpage>486</lpage>
+</bibl>
+
+<bibl id="B7">
+  <title><p>Inferring transcriptional modules from {ChIP-chip}, motif and
+  microarray data</p></title>
+  <aug>
+    <au><snm>Lemmens</snm><fnm>K.</fnm></au>
+    <au><snm>Dhollander</snm><fnm>T.</fnm></au>
+    <au><snm>{De Bie}</snm><fnm>T.</fnm></au>
+    <au><snm>Monsieurs</snm><fnm>P.</fnm></au>
+    <au><snm>Engelen</snm><fnm>K.</fnm></au>
+    <au><cnm>others</cnm></au>
+  </aug>
+  <source>Genome Biology</source>
+  <pubdate>2006</pubdate>
+  <volume>7</volume>
+  <issue>5</issue>
+  <fpage>R37</fpage>
+</bibl>
+
+<bibl id="B8">
+  <title><p>Integrating diverse genomic data using gene sets</p></title>
+  <aug>
+    <au><snm>Tyeku\ cheva</snm><fnm>S.</fnm></au>
+    <au><snm>Marchionni</snm><fnm>L.</fnm></au>
+    <au><snm>Karchin</snm><fnm>R.</fnm></au>
+    <au><snm>Parmigiani</snm><fnm>G.</fnm></au>
+  </aug>
+  <source>Genome Biology</source>
+  <pubdate>2011</pubdate>
+  <volume>12</volume>
+  <issue>10</issue>
+  <fpage>R105</fpage>
+</bibl>
+
+<bibl id="B9">
+  <title><p>A {B}ayesian approach to joint modeling of protein-{DNA} binding,
+  gene expression and sequence data</p></title>
+  <aug>
+    <au><snm>Xie</snm><fnm>Y.</fnm></au>
+    <au><snm>Pan</snm><fnm>W.</fnm></au>
+    <au><snm>Jeong</snm><fnm>K.S.</fnm></au>
+    <au><snm>Xiao</snm><fnm>G.</fnm></au>
+    <au><snm>Khodursky</snm><fnm>A.B.</fnm></au>
+  </aug>
+  <source>Statistics in Medicine</source>
+  <pubdate>2010</pubdate>
+  <volume>29</volume>
+  <issue>4</issue>
+  <fpage>489</fpage>
+  <lpage>503</lpage>
+</bibl>
+
+<bibl id="B10">
+  <title><p>{ChIP-Array}: combinatory analysis of {ChIP}-seq/chip and
+  microarray gene expression data to discover direct/indirect targets of a
+  transcription factor</p></title>
+  <aug>
+    <au><snm>Qin</snm><fnm>J.</fnm></au>
+    <au><snm>Li</snm><fnm>M.J.</fnm></au>
+    <au><snm>Wang</snm><fnm>P.</fnm></au>
+    <au><snm>Zhang</snm><fnm>M.Q.</fnm></au>
+    <au><snm>Wang</snm><fnm>J.</fnm></au>
+  </aug>
+  <source>Nucleic Acids Research</source>
+  <pubdate>2011</pubdate>
+  <volume>39</volume>
+  <issue>suppl 2</issue>
+  <fpage>W430</fpage>
+  <lpage>W436</lpage>
+</bibl>
+
+<bibl id="B11">
+  <title><p>Unsupervised pattern discovery in human chromatin structure through
+  genomic segmentation</p></title>
+  <aug>
+    <au><snm>Hoffman</snm><fnm>M.H.</fnm></au>
+    <au><snm>Buske</snm><fnm>O.J.</fnm></au>
+    <au><snm>Wang</snm><fnm>J.</fnm></au>
+    <au><snm>Weng</snm><fnm>Z.</fnm></au>
+    <au><snm>Bilmes</snm><fnm>J.A.</fnm></au>
+    <au><snm>Noble</snm><fnm>W.S.</fnm></au>
+  </aug>
+  <source>Nature Methods</source>
+  <pubdate>2012</pubdate>
+  <volume>9</volume>
+  <fpage>473</fpage>
+  <lpage>476</lpage>
+</bibl>
+
+<bibl id="B12">
+  <title><p>A graphical model method for integrating multiple sources of
+  genome-scale data</p></title>
+  <aug>
+    <au><snm>Dvorkin</snm><fnm>D.</fnm></au>
+    <au><snm>Biehs</snm><fnm>B.</fnm></au>
+    <au><snm>Kechris</snm><fnm>K.</fnm></au>
+  </aug>
+  <source>Statistical Applications in Genetics and Molecular Biology</source>
+  <pubdate>2013</pubdate>
+  <volume>12</volume>
+  <issue>4</issue>
+  <fpage>469</fpage>
+  <lpage>487</lpage>
+</bibl>
+
+<bibl id="B13">
+  <title><p>Why are essential genes essential? - The essentiality of
+  Saccharomyces genes</p></title>
+  <aug>
+    <au><snm>Zhang</snm><fnm>Z</fnm></au>
+    <au><snm>Ren</snm><fnm>Q</fnm></au>
+  </aug>
+  <source>Microbial Cell</source>
+  <publisher>Shared Science Publishers OG</publisher>
+  <pubdate>2015</pubdate>
+  <volume>2</volume>
+  <issue>8</issue>
+  <fpage>280</fpage>
+  <lpage>-287</lpage>
+  <url>http://www.ncbi.nlm.nih.gov/pmc/articles/PMC5349100/</url>
+</bibl>
+
+<bibl id="B14">
+  <title><p>Essence of life: essential genes of minimal genomes</p></title>
+  <aug>
+    <au><snm>Juhas</snm><fnm>M</fnm></au>
+    <au><snm>Eberl</snm><fnm>L</fnm></au>
+    <au><snm>Glass</snm><fnm>JI</fnm></au>
+  </aug>
+  <source>Trends in Cell Biology</source>
+  <publisher>Elsevier</publisher>
+  <pubdate>2011</pubdate>
+  <volume>21</volume>
+  <issue>10</issue>
+  <fpage>562</fpage>
+  <lpage>-568</lpage>
+  <url>http://dx.doi.org/10.1016/j.tcb.2011.07.005</url>
+</bibl>
+
+<bibl id="B15">
+  <title><p>DEG 10, an update of the database of essential genes that includes
+  both protein-coding genes and noncoding genomic elements</p></title>
+  <aug>
+    <au><snm>Luo</snm><fnm>H.</fnm></au>
+    <au><snm>Lin</snm><fnm>Y.</fnm></au>
+    <au><snm>Gao</snm><fnm>F.</fnm></au>
+    <au><snm>Zhang</snm><fnm>C.T.</fnm></au>
+    <au><snm>Zhang</snm><fnm>R.</fnm></au>
+  </aug>
+  <source>Nucleic Acids Research</source>
+  <pubdate>2014</pubdate>
+  <volume>42</volume>
+  <fpage>D574–D580</fpage>
+</bibl>
+
+<bibl id="B16">
+  <title><p>OGEE: an online gene essentiality database</p></title>
+  <aug>
+    <au><snm>WH</snm><fnm>C</fnm></au>
+    <au><snm>P</snm><fnm>M</fnm></au>
+    <au><snm>MJ</snm><fnm>L</fnm></au>
+    <au><snm>P.</snm><fnm>B</fnm></au>
+  </aug>
+  <source>Nucleic Acids Research</source>
+  <pubdate>2012</pubdate>
+  <volume>40</volume>
+  <fpage>D901</fpage>
+  <lpage>D906</lpage>
+</bibl>
+
+<bibl id="B17">
+  <title><p>Identification and characterization of essential genes in the human
+  genome</p></title>
+  <aug>
+    <au><snm>Wang</snm><fnm>T.</fnm></au>
+    <au><snm>Birsoy</snm><fnm>K.</fnm></au>
+    <au><snm>Hughes</snm><fnm>N. W.</fnm></au>
+    <au><snm>Krupczak</snm><fnm>K. M.</fnm></au>
+    <au><snm>Post</snm><fnm>Y.</fnm></au>
+    <au><snm>Wei</snm><fnm>J. J.</fnm></au>
+    <au><snm>Sabatini</snm><fnm>D. M.</fnm></au>
+    <au><cnm>others</cnm></au>
+  </aug>
+  <source>Science</source>
+  <pubdate>2015</pubdate>
+  <volume>350</volume>
+  <issue>6264</issue>
+  <fpage>1096–1101</fpage>
+</bibl>
+
+<bibl id="B18">
+  <title><p>Advances and perspectives in computational prediction of microbial
+  gene essentiality</p></title>
+  <aug>
+    <au><snm>Mobegi</snm><fnm>FM</fnm></au>
+    <au><snm>Zomer</snm><fnm>A</fnm></au>
+    <au><snm>Jonge</snm><fnm>MI</fnm></au>
+    <au><snm>Hijum</snm><fnm>SAFT</fnm></au>
+  </aug>
+  <source>Briefings in Functional Genomics</source>
+  <pubdate>2017</pubdate>
+  <volume>16</volume>
+  <issue>2</issue>
+  <fpage>70</fpage>
+  <lpage>79</lpage>
+  <url>http://dx.doi.org/10.1093/bfgp/elv063</url>
+</bibl>
+
+<bibl id="B19">
+  <title><p>Predicting Essential Genes and Proteins Based on Machine Learning
+  and Network Topological Features: A Comprehensive Review</p></title>
+  <aug>
+    <au><snm>X</snm><fnm>Z</fnm></au>
+    <au><snm>ML</snm><fnm>A</fnm></au>
+    <au><snm>N</snm><fnm>L</fnm></au>
+  </aug>
+  <source>Frontiers in Physiology</source>
+  <pubdate>2016</pubdate>
+  <volume>7</volume>
+  <issue>75</issue>
+</bibl>
+
+<bibl id="B20">
+  <title><p>Class discovery and classification of tumor samples using mixture
+  modeling of gene expression data---a unified approach</p></title>
+  <aug>
+    <au><snm>Alexandridis</snm><fnm>R.</fnm></au>
+    <au><snm>Lin</snm><fnm>S.</fnm></au>
+    <au><snm>Irwin</snm><fnm>M.</fnm></au>
+  </aug>
+  <source>Bioinformatics</source>
+  <pubdate>2004</pubdate>
+  <volume>20</volume>
+  <issue>16</issue>
+  <fpage>2545</fpage>
+  <lpage>2552</lpage>
+</bibl>
+
+<bibl id="B21">
+  <title><p>Learning classifiers from only positive and unlabeled
+  data</p></title>
+  <aug>
+    <au><snm>Elkan</snm><fnm>C.</fnm></au>
+    <au><snm>Noto</snm><fnm>K.</fnm></au>
+  </aug>
+  <source>Proceedings of the 14th international conference on knowledge
+  discovery and data mining</source>
+  <pubdate>2008</pubdate>
+  <fpage>213</fpage>
+  <lpage>220</lpage>
+</bibl>
+
+<bibl id="B22">
+  <title><p>Naive {B}ayes classifier for positive unlabeled learning with
+  uncertainty</p></title>
+  <aug>
+    <au><snm>He</snm><fnm>J.</fnm></au>
+    <au><snm>Zhang</snm><fnm>Y.</fnm></au>
+    <au><snm>Li</snm><fnm>X.</fnm></au>
+    <au><snm>Wang</snm><fnm>Y.</fnm></au>
+  </aug>
+  <source>Proceedings of the Tenth SIAM International Conference on Data
+  Mining</source>
+  <pubdate>2010</pubdate>
+  <fpage>361</fpage>
+  <lpage>372</lpage>
+</bibl>
+
+<bibl id="B23">
+  <title><p>Hierarchical mixture models for nested data structures</p></title>
+  <aug>
+    <au><snm>Vermunt</snm><fnm>J.K.</fnm></au>
+    <au><snm>Magidson</snm><fnm>J.</fnm></au>
+  </aug>
+  <source>Classification--the Ubiquitous Challenge: Proceedings of the 28th
+  Annual Conference of the Gesellschaft f{\"u}r Klassifikation eV, University
+  of Dortmund, March 9-11, 2004</source>
+  <pubdate>2005</pubdate>
+  <volume>28</volume>
+  <fpage>240</fpage>
+</bibl>
+
+<bibl id="B24">
+  <title><p>Mixture models with multiple levels, with application to the
+  analysis of multifactor gene expression data</p></title>
+  <aug>
+    <au><snm>J\"{o}rnsten</snm><fnm>R.</fnm></au>
+    <au><snm>Kele\c{s}</snm><fnm>S.</fnm></au>
+  </aug>
+  <source>Biostatistics</source>
+  <pubdate>2008</pubdate>
+  <volume>9</volume>
+  <issue>3</issue>
+  <fpage>540</fpage>
+  <lpage>554</lpage>
+</bibl>
+
+<bibl id="B25">
+  <title><p>A nested mixture model for protein identification using mass
+  spectrometry</p></title>
+  <aug>
+    <au><snm>Li</snm><fnm>Q.</fnm></au>
+    <au><snm>MacCoss</snm><fnm>M.J.</fnm></au>
+    <au><snm>Stephens</snm><fnm>M.</fnm></au>
+  </aug>
+  <source>The Annals of Applied Statistics</source>
+  <pubdate>2010</pubdate>
+  <volume>4</volume>
+  <issue>2</issue>
+  <fpage>962</fpage>
+  <lpage>987</lpage>
+</bibl>
+
+<bibl id="B26">
+  <title><p>Maximum likelihood from incomplete data via the {EM}
+  algorithm</p></title>
+  <aug>
+    <au><snm>Dempster</snm><fnm>A.P.</fnm></au>
+    <au><snm>Laird</snm><fnm>N.M.</fnm></au>
+    <au><snm>Rubin</snm><fnm>D.B.</fnm></au>
+  </aug>
+  <source>Journal of the Royal Statistical Society Series B</source>
+  <pubdate>1977</pubdate>
+  <volume>39</volume>
+  <issue>1</issue>
+  <fpage>1</fpage>
+  <lpage>38</lpage>
+</bibl>
+
+<bibl id="B27">
+  <title><p>The {EM} Algorithm and Extensions</p></title>
+  <aug>
+    <au><snm>McLachlan</snm><fnm>G.J.</fnm></au>
+    <au><snm>Krishnan</snm><fnm>T.</fnm></au>
+  </aug>
+  <publisher>Hoboken, New Jersey: Wiley</publisher>
+  <edition>second</edition>
+  <pubdate>2008</pubdate>
+</bibl>
+
+<bibl id="B28">
+  <title><p>Graphical Model Methods for Integrating Diverse Sources of
+  Genome-Scale Data</p></title>
+  <aug>
+    <au><snm>Dvorkin</snm><fnm>D.</fnm></au>
+  </aug>
+  <source>PhD thesis</source>
+  <publisher>University of Colorado</publisher>
+  <pubdate>2013</pubdate>
+</bibl>
+
+<bibl id="B29">
+  <title><p>Assessing a mixture model for clustering with the integrated
+  completed likelihood</p></title>
+  <aug>
+    <au><snm>Biernacki</snm><fnm>C.</fnm></au>
+    <au><snm>Celeux</snm><fnm>G.</fnm></au>
+    <au><snm>Govaert</snm><fnm>G.</fnm></au>
+  </aug>
+  <source>IEEE Transactions on Pattern Analysis and Machine
+  Intelligence</source>
+  <pubdate>2000</pubdate>
+  <volume>22</volume>
+  <issue>7</issue>
+  <fpage>719</fpage>
+  <lpage>725</lpage>
+</bibl>
+
+<bibl id="B30">
+  <title><p>Predicting essential genes in fungal genomes</p></title>
+  <aug>
+    <au><snm>Seringhaus</snm><fnm>M.</fnm></au>
+    <au><snm>Paccanaro</snm><fnm>A.</fnm></au>
+    <au><snm>Borneman</snm><fnm>A.</fnm></au>
+    <au><snm>Snyder</snm><fnm>M.</fnm></au>
+    <au><snm>Gerstein</snm><fnm>M.</fnm></au>
+  </aug>
+  <source>Genome Research</source>
+  <pubdate>2006</pubdate>
+  <volume>16</volume>
+  <issue>9</issue>
+  <fpage>1126</fpage>
+  <lpage>1135</lpage>
+</bibl>
+
+<bibl id="B31">
+  <title><p>Ensembl</p></title>
+  <aug>
+    <au><snm>Zerbino</snm><fnm>DR</fnm></au>
+    <au><cnm>others</cnm></au>
+  </aug>
+  <source>Nucleic Acids Research</source>
+  <pubdate>2018</pubdate>
+  <volume>46</volume>
+  <issue>D1</issue>
+  <fpage>D754–D761</fpage>
+</bibl>
+
+<bibl id="B32">
+  <title><p>Regularization Paths for Generalized Linear Models via Coordinate
+  Descent</p></title>
+  <aug>
+    <au><snm>Jerome Friedman</snm><fnm>RT</fnm></au>
+  </aug>
+  <source>Journal of Statistical Software</source>
+  <pubdate>2010</pubdate>
+  <volume>33</volume>
+  <issue>1</issue>
+  <fpage>1</fpage>
+  <lpage>22</lpage>
+  <url>http://www.jstatsoft.org/v33/i01/</url>
+</bibl>
+
+<bibl id="B33">
+  <title><p>e1071: Misc Functions of the Department of Statistics, Probability
+  Theory Group (Formerly: E1071), TU Wien</p></title>
+  <aug>
+    <au><snm>Meyer</snm><fnm>D</fnm></au>
+    <au><snm>Dimitriadou</snm><fnm>E</fnm></au>
+    <au><snm>Hornik</snm><fnm>K</fnm></au>
+    <au><snm>Weingessel</snm><fnm>A</fnm></au>
+    <au><snm>Leisch</snm><fnm>F</fnm></au>
+  </aug>
+  <pubdate>2017</pubdate>
+  <url>https://CRAN.R-project.org/package=e1071</url>
+  <note>R package version 1.6-8</note>
+</bibl>
+
+<bibl id="B34">
+  <title><p>Classification and Regression by randomForest</p></title>
+  <aug>
+    <au><snm>Liaw</snm><fnm>A</fnm></au>
+    <au><snm>Wiener</snm><fnm>M</fnm></au>
+  </aug>
+  <source>R News</source>
+  <pubdate>2002</pubdate>
+  <volume>2</volume>
+  <issue>3</issue>
+  <fpage>18</fpage>
+  <lpage>22</lpage>
+  <url>http://CRAN.R-project.org/doc/Rnews/</url>
+</bibl>
+
+<bibl id="B35">
+  <title><p>Hedgehog targets in the {D}rosophila embryo and the mechanisms that
+  generate tissue-specific outputs of {H}edgehog signaling</p></title>
+  <aug>
+    <au><snm>Biehs</snm><fnm>B.</fnm></au>
+    <au><snm>Kechris</snm><fnm>K.</fnm></au>
+    <au><snm>Liu</snm><fnm>S.M.</fnm></au>
+    <au><snm>Kornberg</snm><fnm>T.B.</fnm></au>
+  </aug>
+  <source>Development</source>
+  <pubdate>2010</pubdate>
+  <volume>137</volume>
+  <issue>22</issue>
+  <fpage>3887</fpage>
+  <lpage>3898</lpage>
+</bibl>
+
+<bibl id="B36">
+  <aug>
+    <au><snm>M.B</snm><fnm>G</fnm></au>
+  </aug>
+  <url>http://www.gersteinlab.org/proj/predess/</url>
+</bibl>
+
+<bibl id="B37">
+  <title><p>Relating Whole-Genome Expression Data with Protein-Protein
+  Interactions</p></title>
+  <aug>
+    <au><snm>R</snm><fnm>J</fnm></au>
+    <au><snm>D</snm><fnm>G</fnm></au>
+    <au><snm>M</snm><fnm>G</fnm></au>
+  </aug>
+  <source>Genome Research</source>
+  <pubdate>2002</pubdate>
+  <volume>12</volume>
+  <issue>1</issue>
+  <fpage>37</fpage>
+  <lpage>46</lpage>
+</bibl>
+
+<bibl id="B38">
+  <title><p>Estimating the dimension of a model</p></title>
+  <aug>
+    <au><snm>Schwarz</snm><fnm>G.</fnm></au>
+  </aug>
+  <source>The Annals of Statistics</source>
+  <pubdate>1978</pubdate>
+  <volume>6</volume>
+  <issue>2</issue>
+  <fpage>461</fpage>
+  <lpage>464</lpage>
+</bibl>
+
+<bibl id="B39">
+  <title><p>Applications of beta-mixture models in bioinformatics</p></title>
+  <aug>
+    <au><snm>Ji</snm><fnm>Y.</fnm></au>
+    <au><snm>Wu</snm><fnm>C.</fnm></au>
+    <au><snm>Liu</snm><fnm>P.</fnm></au>
+    <au><snm>Wang</snm><fnm>J.</fnm></au>
+    <au><snm>Coombes</snm><fnm>K.R.</fnm></au>
+  </aug>
+  <source>Bioinformatics</source>
+  <pubdate>2005</pubdate>
+  <volume>21</volume>
+  <issue>9</issue>
+  <fpage>2118</fpage>
+  <lpage>2122</lpage>
+</bibl>
+
+<bibl id="B40">
+  <title><p>Dimensionally Reduced Model-Based Clustering Through Mixtures of
+  Factor Mixture Analyzers</p></title>
+  <aug>
+    <au><snm>Viroli</snm><fnm>C.</fnm></au>
+  </aug>
+  <source>Journal of Classification</source>
+  <pubdate>2010</pubdate>
+  <volume>27</volume>
+  <fpage>363</fpage>
+  <lpage>388</lpage>
+</bibl>
+
+<bibl id="B41">
+  <title><p>Linear Model Selection by Cross-Validation</p></title>
+  <aug>
+    <au><snm>Shao</snm><fnm>J.</fnm></au>
+  </aug>
+  <source>Journal of the American Statistical Association</source>
+  <pubdate>1993</pubdate>
+  <volume>88</volume>
+  <issue>422</issue>
+  <fpage>486</fpage>
+  <lpage>494</lpage>
+</bibl>
+
+</refgrp>
+} % end of \BMCxmlcomment

@@ -1,0 +1,7 @@
+﻿Analysis Type:,PANTHER Overrepresentation Test (Released 20171205),,,,,,
+Annotation Version and Release Date:,PANTHER version 13.1 Released 2018-02-03,,,,,,
+Analyzed List:,upload_1 (Saccharomyces cerevisiae),,,,,,
+Reference List:,Saccharomyces cerevisiae (all genes in database),,,,,,
+Test Type:,FISHER,,,,,,
+PANTHER Pathways,Saccharomyces cerevisiae - REFLIST (6722),upload_1 (151),upload_1 (expected),upload_1 (over/under),upload_1 (fold Enrichment),upload_1 (raw P-value),upload_1 (FDR)
+Wnt signaling pathway (P00057),39,8,0.88,+,9.13,6.86E-06,1.03E-03
