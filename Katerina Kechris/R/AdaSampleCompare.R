@@ -9,6 +9,8 @@ load("saved_images/ada")
 library(dplyr,warn.conflicts = FALSE)
 library(ggplot2,warn.conflicts = FALSE)
 library(AdaSampling)
+library(grid)
+library(gridExtra)
 
 feature.table <- getFeatureTable(feature='all')
 dim(feature.table)
@@ -33,7 +35,7 @@ row.names(date.table) = date.table$ensembl
 labels = as.numeric(preproc$essential)
 
 # Analysis
-p <- c(seq(0.01,0.05,0.005)) # percentage training set values
+p <- c(seq(0.01,0.1,0.005)) # percentage training set values
 l <- length(p)
 n <- floor(p*length(labels)) # number of positives (negatives) in the training set at each percent
 n_un <- c(50,100,300) # number of unlabeled instances in the training set
@@ -52,7 +54,11 @@ nn <- matrix(0,ncol=length(p),nrow=4)
 rownames(nn) <- c('n_pos','n_neg','n_na','n_test')
 colnames(nn) <- paste0(p*100,'%')
 
+AUC <- list(matrix(0,ncol=l,nrow=iteration),matrix(0,ncol=l,nrow=iteration),matrix(0,ncol=l,nrow=iteration))
+
 for(k in 1:length(n_un)){
+  cat('Analysis using ',n_un[k],' unlabeled training instances. \n')
+  set.seed(1)
 nn[1,] <- n
 nn[2,] <- n
 nn[3,] <- n_un[k]
@@ -62,7 +68,7 @@ write.csv(nn,paste0('trainTestCount',n_un[k],'.csv'))
 for(j in 1:iteration){
   cat('Iteration = ',j,' of ',iteration,'\n')
 
-for(i in 1:length(n)){
+for(i in 1:l){
 
   # The training and testing scheme is complex.
   # 1. Randomly chose p[i]*3500=n[i] from positive labels (labels.pos) and the same from negative labels (labels.neg) as row idx
@@ -132,9 +138,42 @@ rec_ada_80[j,i] <- ifelse(length(which(confusion_80[,1]==1))>1&length(which(conf
 rec_ada_95[j,i] <- ifelse(length(which(confusion_95[,1]==1))>1&length(which(confusion_95[,2]==1))>1,sum(confusion_95[which(confusion_95[,1]==1),][,2])/length(confusion_95[which(confusion_95[,2]==1),][,2]),NA)
                    
 # f-measure is a geometric mean of precision and recall
+# AUC
+
+true_Y = as.vector(confusion_50[,2])
+probs = as.vector(t_semi_ada_knn[,1])
+
+getROC_AUC = function(probs, true_Y){
+  probsSort = sort(probs, decreasing = TRUE, index.return = TRUE)
+  val = unlist(probsSort$x)
+  idx = unlist(probsSort$ix)  
+  
+  roc_y = true_Y[idx];
+  stack_x = cumsum(roc_y == 0)/sum(roc_y == 0)
+  stack_y = cumsum(roc_y == 1)/sum(roc_y == 1)    
+  
+  auc = sum((stack_x[2:length(roc_y)]-stack_x[1:length(roc_y)-1])*stack_y[2:length(roc_y)])
+  return(list(stack_x=stack_x, stack_y=stack_y, auc=auc))
+}
+
+aList = getROC_AUC(probs, true_Y) 
+
+stack_x = unlist(aList$stack_x)
+stack_y = unlist(aList$stack_y)
+auc = unlist(aList$auc)
+
+AUC[[k]][j,i] <- auc
+
+#plot(stack_x, stack_y, type = "l", col = "blue", xlab = "False Positive Rate", ylab = "True Positive Rate", main = "ROC")
+#axis(1, seq(0.0,1.0,0.1))
+#axis(2, seq(0.0,1.0,0.1))
+#abline(h=seq(0.0,1.0,0.1), v=seq(0.0,1.0,0.1), col="gray", lty=3)
+#legend(0.7, 0.3, sprintf("%3.3f",auc), lty=c(1,1), lwd=c(2.5,2.5), col="blue", title = "AUC")
 
 }
 }
+
+write.csv(AUC,paste0('results/tables/AUC',n_un[k],'.csv'))
 
 ada_prec_50 <- replace(prec_ada_50,prec_ada_50==0,NA)
 ada_prec_md <- replace(prec_ada_md,prec_ada_md==0,NA)
@@ -173,14 +212,14 @@ write.csv(prec_ada,paste0('results/tables/adaPrecision',n_un[k],'.csv'))
 write.csv(rec_ada,paste0('results/tables/adaRecall',n_un[k],'.csv'))
 write.csv(f_ada,paste0('results/tables/adaf',n_un[k],'.csv'))
 
-performance.vector.0.ada.50 <- c(prec_ada[1,],rec_ada[1,],f_ada[1,],summary0.med[4,1:9],summary0.med[5,1:9],summary0.med[6,1:9])
-performance.vector.0.ada.md <- c(prec_ada[2,],rec_ada[2,],f_ada[2,],summary0.med[4,1:9],summary0.med[5,1:9],summary0.med[6,1:9])
-performance.vector.0.ada.80 <- c(prec_ada[3,],rec_ada[3,],f_ada[3,],summary0.med[4,1:9],summary0.med[5,1:9],summary0.med[6,1:9])
-performance.vector.0.ada.95 <- c(prec_ada[4,],rec_ada[4,],f_ada[4,],summary0.med[4,1:9],summary0.med[5,1:9],summary0.med[6,1:9])
+performance.vector.0.ada.50 <- c(prec_ada[1,],rec_ada[1,],f_ada[1,],summary0.med[4,],summary0.med[5,],summary0.med[6,])
+performance.vector.0.ada.md <- c(prec_ada[2,],rec_ada[2,],f_ada[2,],summary0.med[4,],summary0.med[5,],summary0.med[6,])
+performance.vector.0.ada.80 <- c(prec_ada[3,],rec_ada[3,],f_ada[3,],summary0.med[4,],summary0.med[5,],summary0.med[6,])
+performance.vector.0.ada.95 <- c(prec_ada[4,],rec_ada[4,],f_ada[4,],summary0.med[4,],summary0.med[5,],summary0.med[6,])
 
-perc.2 <- rep(as.numeric(rownames(method.means[1:9,])),6)*100
-measure.2 <- rep(c(rep('Precision',9),rep('Recall',9),rep('f-measure',9)),2)
-method.2 <- c(rep('Semi-ADA',27),rep('Semi-HM',27))
+perc.2 <- rep(as.numeric(rownames(method.means)),6)*100
+measure.2 <- rep(c(rep('Precision',l),rep('Recall',l),rep('f-measure',l)),2)
+method.2 <- c(rep('Semi-ADA',l*3),rep('Semi-HM',l*3))
 group.2 <- interaction(measure.2,method.2)
 
 ada.0.50 <- data.frame(percent=perc.2,performance=performance.vector.0.ada.50,measure=measure.2,method=method.2,group=group.2)
@@ -226,6 +265,54 @@ p7.ada.95 <- p7.ada.95 + xlab('Training Set (%)') + ylab('Performance') + labs(c
 
 png(paste0('results/plots/measures_ada_',n_un[k],'.png'),height = 8, width = 8, res = 300, units = 'in')
 grid.arrange(p7.ada.50,p7.ada.80,p7.ada.95)
+dev.off()
+}
+
+AUC.list1 <- list()
+  
+for(k in 1:length(n_un)){
+#AUC1 <- t(AUC.semi)
+AUC2 <- AUC[[k]]
+#AUC3 <- t(AUC.sup)
+#AUC4 <- t(AUC.J48)
+AUC.ada <- matrix(0,ncol=2*l,nrow=iteration)
+
+for(f in 1:ncol(AUC2)){
+  #AUC[,2*f-3] <- AUC1[,f]
+  #AUC[,4*f-2] <- AUC2[,f]
+  AUC.ada[,2*f-1] <- AUC1[,f]
+  AUC.ada[,2*f]   <- AUC2[,f]
+}
+
+AUC.list1$new <- as.vector(AUC.ada)
+names(AUC.list1)[length(AUC.list1)] = n_un[k]
+
+#for(g in 1:length(contam.perc)){  # Use for rerunning plots only
+n <- rep(p,each=2*iteration)
+n <- factor(n)
+method <- rep(c(rep('semi',iteration),rep('ada',iteration)),l)
+
+tog <- data.frame(AUC=AUC.list1[[k]],n=n,method=method)
+levels(tog$method) <- c('semi','ada')
+box.at <- seq(1:(l*3))
+remove <- seq(3,length(box.at),3)
+at <- box.at[!(box.at%in%remove)]
+
+png(paste0('results/plots/6D_allFeatures_unbalanced_ada_',n_un[k],'.png'),
+    height = 8, width = 8, res = 300, units = 'in')
+boxplot(tog$AUC~tog$method*tog$n,at=at,col=c('dodgerblue2','red'),xlab='Training Set (%)', ylab='AUC',xaxt="n",
+        main=paste0('AdaBoost vs Semi-HM (19 Features)\nAUC for various training % with ',iteration,' iterations'),ylim=c(0.38,0.8),cex.axis=1.5,cex.lab=1.4)
+axis(side=1,at=seq(2.5,92.5,5),labels=seq(1,10,0.5),las=2,cex.axis=1.5)
+legend("topleft",c("Semi-HM","AdaBoost"),col=c('red','dodgerblue2'),pch=15)
+dev.off()
+
+
+# For paper without title
+png(paste0('results/plots/6D_allFeatures_unbalanced_ada_',n_un[k],'_paper.png'),
+    height = 8, width = 8, res = 300, units = 'in')
+boxplot(tog$AUC~tog$method*tog$n,at=at,col=c('dodgerblue2','red'),xlab='Training Set (%)', ylab='AUC',xaxt="n",ylim=c(0.38,0.8),cex.axis=1.5,cex.lab=1.4)
+axis(side=1,at=seq(2.5,92.5,5),labels=seq(1,10,0.5),las=2,cex.axis=1.5)
+legend("topleft",c("Semi-HM","AdBoost"),col=c('red','dodgerblue2'),pch=15)
 dev.off()
 }
 
