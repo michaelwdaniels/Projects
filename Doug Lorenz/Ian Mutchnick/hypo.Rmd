@@ -1,0 +1,267 @@
+---
+title: "Intervention to Reduce Hypothermia in Pediatric Neurosurgery"
+author: "Michael W. Daniels"
+date: "7/8/2019"
+output: html_document
+---
+
+This analysis evaluates a warming intervention to a control group. 
+
+### _Outline_
+
+#### I. Descriptives
+Recalculate the descriptives found in the Results section.
+
+#### II. Mixed Effects model
+The patient temps across 2 hours at 20 minute intervals will be a continuous outcome variable. There will be four models to presented here.
+
+> A. Non-imputed
+
++ 1. time as a factor controlling for prep time and age.
+
++ 2. quadratic time effects controlling for prep time and age.
+
+> B. Imputed
+
+Imputation technique was carry value forward. Three intervention preop temps were imputed with mean temp of preop temp of intervention patients.
+
++ 1. time as a factor controlling for prep time and age.
+
++ 2. quadratic time effects controlling for prep time and age.
+
+#### III. Mixed Effects Logistic
+The outcome is analyzed using a binary cutoff for hypothermia as temp <36 = 1
+Only imputed dataset can be used here because generalized linear mixed models throw out incomplete cases which would leave us with only n=3.
+
+
+### Descriptives
+```{r comment=NA,echo=T,message=F,warning=FALSE}
+
+rm(list=ls())
+par(mfrow=c(1,1),mar=c(2,2,1,1), oma=c(0,0,0,0))
+options(width=200)
+
+setwd("~/Desktop/Projects/Doug Lorenz/Ian Mutchnick")
+dat <- read.csv("Mutchnick.csv", header=T)
+names(dat)[8:9] <- c('t0','t1') # rename preop temp to t0 and initial temp to t1
+
+# Check results findings
+'During the study period 38 patients underwent surgery with Surgeon 1 and were assigned to the WG and 82 patients underwent surgery with Surgeon 2 and 3 and were assigned to the CG. Average age at surgery was 8 years old for both groups. 57.9% of the WG was male as compared to 47.6% of the CG. Average operative time for the warming group was 218 minutes versus 172 minutes in the CG (p=.024). Type of procedure being performed was also analyzed between groups: control group had a higher percentage of cranioplasties (62% vs. 40%) and the intervention group had a higher percentage of “other” procedures compared to the control group (24% vs. 6%). There were no other significant differences between the two groups (Table 1).
+
+To determine whether patients were more likely to be hypothermic, a standard test of proportion was utilized to analyze the proportion of hypothermic patients in the WG versus CG at both 1 hour and 2 hours intraoperative. If the analysis started with the last preoperative temperature, at 1 hour intraoperative 51.2% (n=42) of the CG versus 31.6% (n=12) of the WG experienced at least one hypothermic temperature (p=.044). At 2 hours intraoperative, 57.3% (n=47) of the CG versus 36.8% (n= 14) WG experienced at least one hypothermic temperature (p=.037). Similar results were found when the time interval analyzed began with the first intraoperative temperature (excluding the last preoperative temperature): at 1 hour intraoperative 50.6% (n=40) of the CG versus 29.4% (n=10) of the WG experienced at least one hypothermic episode (p=0.037). At 2 hours intraoperative 54.9% (n=45) of the CG versus 31.6% (n=12) of the WG (p=0.017).'
+
+library(dplyr)
+
+dat %>% group_by(group) %>% summarise(n=n(),age=round(mean(age),2),genderM=round(sum(gender=='M')/n,2),AvgORtime=round(mean(ortime),2)*60)
+
+minTemp1hr <- dat %>% group_by(group) %>% select(8:13) %>% apply(.,1,function(x) min(x,na.rm=T))
+dat$hypby1hr <- ifelse(as.numeric(minTemp1hr)<36,1,0)
+dat %>% group_by(group) %>% summarise(n=n(),numHyp=sum(hypby1hr),propHyp=mean(hypby1hr))
+prop.test(c(43,11),c(82,38))
+
+minTemp2hr <- dat %>% group_by(group) %>% select(8:17) %>% apply(.,1,function(x) min(x,na.rm=T))
+dat$hypby2hr <- ifelse(as.numeric(minTemp2hr)<36,1,0)
+dat %>% group_by(group) %>% summarise(n=n(),numHyp=sum(hypby2hr),propHyp=mean(hypby2hr))
+prop.test(c(45,12),c(82,38))
+
+minTemp1hrMinusPreop <- dat[-c(25,33),] %>% group_by(group) %>% select(9:13) %>% apply(.,1,function(x) min(x,na.rm=T))
+dat[-c(25,33),]$hypby1hr <- ifelse(as.numeric(minTemp1hrMinusPreop)<36,1,0)
+dat[-c(25,33),] %>% group_by(group) %>% summarise(n=n(),numHyp=sum(hypby1hr),propHyp=mean(hypby1hr))
+prop.test(c(43,11),c(82,36))
+
+minTemp2hrMinusPreop <- dat %>% group_by(group) %>% select(9:17) %>% apply(.,1,function(x) min(x,na.rm=T))
+dat$hypby2hr <- ifelse(as.numeric(minTemp2hrMinusPreop)<36,1,0)
+dat %>% group_by(group) %>% summarise(n=n(),numHyp=sum(hypby2hr),propHyp=mean(hypby2hr))
+prop.test(c(45,12),c(82,38))
+
+# Correlation between prep time and last preop temp
+cor(dat$preptime,dat$t0,use='pairwise.complete.obs',method='pearson') # 0.041
+which(is.na(dat$preptime)) # rows 67 78
+which(is.na(dat$t0)) # rows 19 21
+# 116 complete observations have a correlation of 0.041 between prep time and last preop temp
+
+# Correlation between prep time and mininum intraoperative temp
+temp_min <- apply(dat[,8:17],1,function(x) min(x,na.rm=T)) # only 3 instances with complete temp data
+cor(dat$preptime,temp_min,use='pairwise.complete.obs',method='pearson') # 0.017
+which(is.na(dat$preptime)) # rows 67 78
+which(is.na(temp_min)) # none
+# 118 complete observations have a correlation of 0.017 between prep time and minimum temp (includes last preop temp)
+
+# Correlation between the controls for prep time and last preop temp
+cor(dat$preptime[which(dat$group=='control')],dat$t0[which(dat$group=='control')],use='pairwise.complete.obs',method='pearson') # 0.070
+which(is.na(dat$preptime[which(dat$group=='control')])) # rows 29 40
+which(is.na(dat$t0[which(dat$group=='control')])) # none
+# 118 complete observations have a correlation of 0.071 between prep time and last preop temp for controls
+
+# Correlation between the interventions for prep time and last preop temp
+cor(dat$preptime[which(dat$group=='intervention')],dat$t0[which(dat$group=='intervention')],use='pairwise.complete.obs',method='pearson') # -0.073
+which(is.na(dat$preptime[which(dat$group=='intervention')])) # rows 29 40
+which(is.na(dat$t0[which(dat$group=='intervention')])) # rows 19 21
+# 118 complete observations have a correlation of -0.073 between prep time and last preop temp for interventions
+
+# T-test between groups for preptime
+wilcox.test(dat$preptime[which(dat$group=='control')],dat$preptime[which(dat$group=='intervention')]) 
+# W = 1341, p-value = 0.3037
+
+# T-test between groups for last preop temp
+wilcox.test(dat$t0[which(dat$group=='control')],dat$t0[which(dat$group=='intervention')])
+# W = 564.5, p-value = 9.485e-08
+
+```
+
+
+### Mixed Effects Models
+#### Unimputed
+```{r comment=NA,echo=T,message=F,warning=FALSE}
+
+# Convert wide format to long
+dat.long <- reshape(dat, varying=paste("t",c(0,1,15,30,45,60,75,90,105,120),sep=""), direction="long",
+   v.names=c("t"), timevar="time", idvar="id", times=c(0,1,15,30,45,60,75,90,105,120))
+
+# load additional libraries for mixed models and spaghetti plots
+library(nlme) # for linear mixed effects models
+library(lattice) # for spaghetti plots (xyplot)
+library(lme4) # for generalized mixed effects model (logistic regression)
+library(kableExtra)
+
+# First let's run the models without imputation for missing data while adjusting for prep time and age and comparing model fits using AIC
+mod1.prep <- lme(t~factor(time)*group+preptime, random=~1|id, data=dat.long, na.action=na.omit) # random intercept by id  
+mod1.age <- lme(t~factor(time)*group+age, random=~1|id, data=dat.long, na.action=na.omit) # random intercept by id  
+mod1.age.prep <- lme(t~factor(time)*group+preptime+age, random=~1|id, data=dat.long, na.action=na.omit) # random intercept by id  
+mod1.age.prep.quad <- lme(t~time*group+I(time^2)*group+preptime+age, random=~1|id, data=dat.long, na.action=na.omit) # random slope for time by group
+mod1.age.prep.quad.slope <- lme(t~time*group+I(time^2)*group+preptime+age, random=~time|id, data=dat.long, na.action=na.omit) # random slope for time by group
+mod1.age.prep.quad.slopesq <- lme(t~time*group+I(time^2)*group+preptime+age, random=~time+I(time^2)|id, data=dat.long, na.action=na.omit) # random slope for time by group
+mod1.age.prep.quad.group <- update(mod1.age.prep.quad.slope, random=~time*group|id)
+#mod1.age.prep.quad.groupsq <- update(mod1.age.prep.quad.slopesq, random=~time*group+I(time^2)*group|id)
+
+#summary(mod1.prep)$AIC                  # 1829.695
+#summary(mod1.age)$AIC                   # 1840.958
+#summary(mod1.age.prep)$AIC              # 1826.374 *
+#summary(mod1.age.prep.quad)$AIC         # 1887.837 
+#summary(mod1.age.prep.quad.slope)$AIC   # 1851.098 
+#summary(mod1.age.prep.quad.slopesq)$AIC # 1853.645 
+#summary(mod1.age.prep.quad.group)$AIC   # 1846.565
+#summary(mod1.age.prep.quad.groupsq)$AIC # did not converge
+
+AICnonImp <- as.data.frame(cbind(Models=c('preptime','age','preptime+age','time squared,random int','time squared, random slope time','time squared, random slope time quadratic','time squared, random slope group x time'),AIC= c(signif(summary(mod1.prep)$AIC,6),signif(summary(mod1.age)$AIC,6),signif(summary(mod1.age.prep)$AIC,6),signif(summary(mod1.age.prep.quad)$AIC,6),signif(summary(mod1.age.prep.quad.slope)$AIC,6),signif(summary(mod1.age.prep.quad.slopesq)$AIC,6),signif(summary(mod1.age.prep.quad.group)$AIC,6))))
+
+kable(AICnonImp) %>% kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),position="center") %>%
+  row_spec(0,align = 'l') %>% row_spec(1:7,align = c('l')) %>% 
+  group_rows("Time as Factor",1,3) %>%
+  group_rows("Time as Continuous",4,7) 
+
+modf <- lme(t~factor(time):group-1, random=~1|id, data=dat.long, na.action=na.omit, subset=t>23)
+
+#summary(modf)
+
+f <- fixef(modf)
+m <- matrix(f, nrow=10)
+x <- c(-15,0,15,30,45,60,75,90,105,120)
+
+plot(x, m[,1], type="o", ylim=c(34,39), las=1, bty="l", ylab='Mean Temperature (\u00B0C)', xlab='Time (min)', pch=19, col="blue")
+   lines(x, m[,2], type="o", pch=19, col="red")
+   abline(h=36, lty=2)
+   legend('bottomright',c('Intervention','Control'), col=c(2,4), lty=1)
+   
+```
+
+
+### Mixed Effects Models
+#### Imputed
+```{r comment=NA,echo=T,message=F,warning=FALSE}
+
+# Second, lets impute by carrying forward last value 
+# There are two instances with missing data for last preop temp (t0) - impute using mean last preop temp for designated group identification
+# This is important due to group difference
+dat1 <- dat
+t0.mean.int <- mean(dat1$t0[which(dat1$group=='intervention')],na.rm=T)
+dat1$t0[which(is.na(dat1$t0))] <- t0.mean.int
+
+# Create a loop that carries forward prior value
+for(i in 9:17) {
+   dat1[,i] <- ifelse(is.na(dat1[,i]),dat1[,i-1],dat1[,i])
+}
+dat1$preptime[c(67,78)]<- mean(dat1$preptime[dat1$group=='control'],na.rm=T)
+
+# Convert wide format to long
+dat.long1 <- reshape(dat1, varying=paste("t",c(0,1,15,30,45,60,75,90,105,120),sep=""), direction="long",
+                    v.names=c("t"), timevar="time", idvar="id", times=c(0,1,15,30,45,60,75,90,105,120))
+# Repeat above analysis with complete temp data
+mod1.prep <- lme(t~factor(time)*group+preptime, random=~1|id, data=dat.long1, na.action=na.omit) # random intercept by id  
+mod1.age <- lme(t~factor(time)*group+age, random=~1|id, data=dat.long1, na.action=na.omit) # random intercept by id  
+mod1.age.prep <- lme(t~factor(time)*group+preptime+age, random=~1|id, data=dat.long1, na.action=na.omit) # random intercept by id  
+mod1.age.prep.quad <- lme(t~time*group+I(time^2)*group+preptime+age, random=~1|id, data=dat.long1, na.action=na.omit) # random slope for time by group
+mod1.age.prep.quad.slope <- lme(t~time*group+I(time^2)*group+preptime+age, random=~time|id, data=dat.long1, na.action=na.omit) # random slope for time by group
+mod1.age.prep.quad.slopesq <- lme(t~time*group+I(time^2)*group+preptime+age, random=~time+I(time^2)|id, data=dat.long1, na.action=na.omit) # random slope for time by group
+mod1.age.prep.quad.group <- update(mod1.age.prep.quad.slope, random=~time*group|id)
+#mod1.age.prep.quad.groupsq <- update(mod1.age.prep.quad.slopesq, random=~time*group+I(time^2)*group|id)
+
+#summary(mod1.prep)$AIC                  # 2178.055
+#summary(mod1.age)$AIC                   # 2198.693
+#summary(mod1.age.prep)$AIC              # 2175.984
+#summary(mod1.age.prep.quad)$AIC         # 2211.327 
+#summary(mod1.age.prep.quad.slope)$AIC   # 2112.307 
+#summary(mod1.age.prep.quad.slopesq)$AIC # 2106.853 *
+#summary(mod1.age.prep.quad.group)$AIC   # 2112.75 
+#summary(mod1.age.prep.quad.groupsq)$AIC # did not converge
+
+AICImp <- as.data.frame(cbind(Models=c('preptime','age','preptime+age','time squared,random int','time squared, random slope time','time squared, random slope time quadratic','time squared, random slope group x time'),AIC= c(signif(summary(mod1.prep)$AIC,6),signif(summary(mod1.age)$AIC,6),signif(summary(mod1.age.prep)$AIC,6),signif(summary(mod1.age.prep.quad)$AIC,6),signif(summary(mod1.age.prep.quad.slope)$AIC,6),signif(summary(mod1.age.prep.quad.slopesq)$AIC,6),signif(summary(mod1.age.prep.quad.group)$AIC,6))))
+
+kable(AICImp) %>% kable_styling(bootstrap_options = c("striped","hover","condensed","responsive"),position="center") %>%  row_spec(0,align = 'l') %>% row_spec(1:7,align = c('l'))
+
+modf <- lme(t~factor(time):group-1, random=~1|id, data=dat.long1, na.action=na.omit, subset=t>23)
+
+#summary(modf)
+   
+f <- fixef(modf)
+m <- matrix(f, nrow=10)
+x <- c(-15,0,15,30,45,60,75,90,105,120)
+
+plot(x, m[,1], type="o", ylim=c(34,39), las=1, bty="l", ylab='Mean Temperature (\u00B0C)', xlab='Time (min)', pch=19, col="blue")
+   lines(x, m[,2], type="o", pch=19, col="red")
+   abline(h=36, lty=2)
+   legend('bottomright',c('Intervention','Control'), col=c(2,4), lty=1)
+xyplot(t~time|group, groups=id, data=dat.long1, type="l", subset=t>23,
+       panel = function(x,y,groups,...) { 
+          panel.xyplot(x,y,groups,...);
+          panel.lines(x=c(0,120), y=rep(36,2), type="l", lwd=2, col="black")
+       })
+
+```
+
+### Mixed Effects Logistic
+
+```{r comment=NA,echo=T,message=F,warning=FALSE}
+
+dat.long1$resp <- 1*(dat.long1$t<36)
+
+mod <- glmer(resp~time*group + age + preptime + (1 | id), data=dat.long1, family=binomial)
+summary(mod)
+
+# Create a plot that compares the proportion of hypothermic patients at each time point
+# to the predicted values from the best model
+# First find the proportion of patients at each time point
+
+hypo.actual <- tapply(dat.long1$resp, list(dat.long1$time, dat.long1$group), mean, na.rm=T)
+
+hypo.pred <- tapply(ifelse(predict(mod,type='response')<0.5,0,1), list(dat.long1$time, dat.long1$group), mean, na.rm=T)
+
+hypo.pred.quad <- tapply(ifelse(predict(mod1.age.prep.quad.slopesq,type='response')<36,1,0), list(dat.long1$time, dat.long1$group), mean, na.rm=T)
+
+table(ifelse(predict(mod,type='response')<0.5,0,1))
+
+plot(x, hypo.actual[,1], type="l", ylim=c(0,1), las=1, bty="l", ylab='Proportion Hypothermic (%)', xlab='Time (min)', pch=19, col="blue",
+     main='Comparing Actual to Predicted Proportion\nHypothermic Between Intervention and Controls')
+lines(x, hypo.actual[,2], type="l", pch=19, col="red")
+lines(x, hypo.pred[,1], type="l", pch=19, col="blue",lty=2)
+lines(x, hypo.pred[,2], type="l", pch=19, col="red",lty=2)
+legend('topright',c('Intervention','Control','Predicted'), col=c(2,4,1), lty=c(1,1,2))
+
+plot(x, hypo.actual[,1], type="l", ylim=c(0,1), las=1, bty="l", ylab='Proportion Hypothermic (%)', xlab='Time (min)', pch=19, col="blue",
+     main='Comparing Actual to Predicted Proportion\nHypothermic Between Intervention and Controls\nQuadratic Approximation')
+lines(x, hypo.actual[,2], type="l", pch=19, col="red")
+lines(x, hypo.pred.quad[,1], type="l", pch=19, col="blue",lty=2)
+lines(x, hypo.pred.quad[,2], type="l", pch=19, col="red",lty=2)
+legend('topright',c('Intervention','Control','Predicted'), col=c(2,4,1), lty=c(1,1,2))
+
+```
