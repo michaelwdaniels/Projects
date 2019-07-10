@@ -40,8 +40,8 @@ names(peptide)[1] <- 'ID'
 names(data.surv)[1] <- 'ID'
 library(plyr)
 xxx <- join(peptide, data.surv, by = c("ID"))
-#head(xxx)
-#dim(xxx) # 579 98
+head(xxx)
+dim(xxx) # 579 98
 
 # First glance of the data reveals a missing data problem
 # I can use the mice package to impute the values
@@ -51,48 +51,49 @@ xxx <- join(peptide, data.surv, by = c("ID"))
 # Multiple imputations by chained equations
 library(mice)
 set.seed(1)
-peptide.mice <- mice(xxx[,-c(1:3)],m=1)
-peptide.comp <- complete(peptide.mice)
-#str(peptide.comp)
+m.mice <- 5 # number of datasets for mice to impute
+peptide.mice <- mice(xxx,m=m.mice)
+peptide.comp <- complete(peptide.mice,'all')
+str(peptide.comp)
 #peptide.mira <- with(peptide.comp,lassoFxPen())
 #peptide.pool <- pool(peptide.mira)
-i=5
-#dim(peptide.comp) # 579 95
+dim(peptide.comp[[1]]) # 579 98
+head(peptide.comp[[1]]) # 579 98
+
+dfs.signature <- vector('list',m.mice)
+os.signature <- vector('list',m.mice)
+
+set.seed(1974)
+for(k in 3:5){
 for(i in 1:length(idxERPR)){
-  cat(paste0('Iteration ',i,' of ',length(idxERPR),'\n'))
-      cat('DFS \n')
-  surv1 <- cbind(xxx$DFS,xxx$DFS.Event,peptide.comp)
-  ttt <- complete.cases(surv1[idxERPR[[i]],])
-  #optL1 <- optL1(Surv(surv1$DFS[ttt],surv1$DFS.Event[ttt]), penalized = surv1[ttt,-c(1:2,88:97)])
-  #optL2 <- optL2(Surv(surv1$DFS[ttt],surv1$DFS.Event[ttt]), penalized = surv1[ttt,-c(1:2,88:97)])
-  #fit.pen <- penalized(Surv(surv1$DFS[ttt],surv1$DFS.Event[ttt]), penalized = surv1[ttt,-c(1:2,88:97)],lambda2 = optL2$lambda)
+cat(paste0('Iteration ',i,' of ',length(idxERPR),'\n'))
+cat('DFS \n')
+  for(j in 1:m.mice){
+    data.sgl <- list(x=peptide.comp[[j]][idxERPR[[i]],-c(1:3,89:98)], time = peptide.comp[[j]]$DFS[idxERPR[[i]]], status = peptide.comp[[j]]$DFS.Event[idxERPR[[i]]])
+    sgl.index <- rep(1,ncol(xxx[,-c(1:3,89:98)]))
+    cv.sgl <- cvSGL(data.sgl, sgl.index, type = "cox",maxit = 15)
+    idxx <- which(!cv.sgl$fit$beta[,which.min(cv.sgl$lldiff)]==0)
+    dfs.signature[[j]] <- as.data.frame(cbind(colnames(cv.sgl$fit$X)[idxx],round(as.numeric(cv.sgl$fit$beta[idxx,which.min(cv.sgl$lldiff)]),3)))
+    colnames(dfs.signature[[j]]) <- c('Genes','Beta')
+  }
+signature.dfs.all <- data.frame(genes=unlist(lapply(dfs.signature, `[[`, 1)),beta=unlist(lapply(dfs.signature, `[[`, 2)))
+gene.sig <- names(table(signature.dfs.all[,1]))[table(signature.dfs.all[,1])>=k]
+write.csv(gene.sig,paste0('tables/',namesERPR[i],'.dfs.signature',k,'.csv'))
 
-  data.sgl <- list(x=surv1[ttt,-c(1:2,88:97)], time = surv1$DFS[ttt], status = surv1$DFS.Event[ttt])
-  sgl.index <- rep(1:ncol(surv1[ttt,-c(1:2,88:97)]))
-  #fit.sgl <- SGL(data.sgl, sgl.index, type = "cox")
-  cv.sgl <- cvSGL(data.sgl, sgl.index, type = "cox",maxit = 15)
-  idxx <- which(!cv.sgl$fit$beta[,which.min(cv.sgl$lldiff)]==0)
-  dfs.signature <- as.data.frame(cbind(colnames(cv.sgl$fit$X)[idxx],round(as.numeric(cv.sgl$fit$beta[idxx,which.min(cv.sgl$lldiff)]),3)))
-  colnames(dfs.signature) <- c('Genes','Beta')
-  write.csv(dfs.signature,paste0('tables/',namesERPR[i],'.dfs.signature.csv'))
-
-    cat('OS \n')
-  surv2 <- cbind(xxx$OS,xxx$OS.Event,peptide.comp)
-  ttt <- complete.cases(surv2)
-  #optL1 <- optL1(Surv(surv2$OS[ttt],surv2$OS.Event[ttt]), penalized = surv2[ttt,-c(1:2,88:97)])
-  #optL2 <- optL2(Surv(surv2$OS[ttt],surv2$OS.Event[ttt]), penalized = surv2[ttt,-c(1:2,88:97)])
-  #fit.pen <- penalized(Surv(surv2$OS[ttt],surv2$OS.Event[ttt]), penalized = surv2[ttt,-c(1:2,88:97)],lambda2 = optL2$lambda)
-
-  data.sgl <- list(x=surv2[ttt,-c(1:2,88:97)], time = surv2$OS[ttt], status = surv2$OS.Event[ttt])
-  sgl.index <- rep(1:ncol(surv2[ttt,-c(1:2,88:97)]))
-  #fit.sgl <- SGL(data.sgl, sgl.index, type = "cox")
-  cv.sgl <- cvSGL(data.sgl, sgl.index, type = "cox",maxit = 25)
-  idxx <- which(!cv.sgl$fit$beta[,which.min(cv.sgl$lldiff)]==0)
-  os.signature <- as.data.frame(cbind(colnames(cv.sgl$fit$X)[idxx],round(as.numeric(cv.sgl$fit$beta[idxx,which.min(cv.sgl$lldiff)]),3)))
-  colnames(os.signature) <- c('Genes','Beta')
-  write.csv(os.signature,paste0('tables/',namesERPR[i],'.os.signature.csv'))
+cat('OS \n')
+  for(j in 1:m.mice){
+    data.sgl <- list(x=peptide.comp[[j]][idxERPR[[i]],-c(1:3,89:98)], time = peptide.comp[[j]]$DFS[idxERPR[[i]]], status = peptide.comp[[j]]$OS.Event[idxERPR[[i]]])
+    sgl.index <- rep(1,ncol(xxx[,-c(1:3,89:98)]))
+    cv.sgl <- cvSGL(data.sgl, sgl.index, type = "cox",maxit = 15)
+    idxx <- which(!cv.sgl$fit$beta[,which.min(cv.sgl$lldiff)]==0)
+    os.signature[[j]] <- as.data.frame(cbind(colnames(cv.sgl$fit$X)[idxx],round(as.numeric(cv.sgl$fit$beta[idxx,which.min(cv.sgl$lldiff)]),3)))
+    colnames(os.signature[[j]]) <- c('Genes','Beta')
+  }
+signature.os.all <- data.frame(genes=unlist(lapply(os.signature, `[[`, 1)),beta=unlist(lapply(os.signature, `[[`, 2)))
+gene.sig.os <- names(table(signature.os.all[,1]))[table(signature.os.all[,1])>=k]
+write.csv(gene.sig.os,paste0('tables/',namesERPR[i],'.os.signature',k,'.csv'))
 }
-
+}
 save.image('code/signatureWill')
 
 # Survival Calculation
